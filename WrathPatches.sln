@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaveMenu.AddDisposableFix.p
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoBindingLogSpamFix.patch", "NoBindingLogSpamFix.patch\NoBindingLogSpamFix.patch.csproj", "{590B7DAC-D068-45DA-8416-EBA27FAD58CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitMarkManager.LateUpdateFix.patch", "UnitMarkManager.LateUpdateFix.patch\UnitMarkManager.LateUpdateFix.patch.csproj", "{92EA9A08-2930-4F25-A1A6-5496F28F444F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStatistic.Tick.PlayerNullFix.patch", "GameStatistic.Tick.PlayerNullFix.patch\GameStatistic.Tick.PlayerNullFix.patch.csproj", "{5EBA07B0-6C9C-40D6-AC5A-145F76A44C11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +48,14 @@ Global
 		{590B7DAC-D068-45DA-8416-EBA27FAD58CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{590B7DAC-D068-45DA-8416-EBA27FAD58CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{590B7DAC-D068-45DA-8416-EBA27FAD58CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92EA9A08-2930-4F25-A1A6-5496F28F444F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92EA9A08-2930-4F25-A1A6-5496F28F444F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92EA9A08-2930-4F25-A1A6-5496F28F444F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92EA9A08-2930-4F25-A1A6-5496F28F444F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EBA07B0-6C9C-40D6-AC5A-145F76A44C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EBA07B0-6C9C-40D6-AC5A-145F76A44C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EBA07B0-6C9C-40D6-AC5A-145F76A44C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EBA07B0-6C9C-40D6-AC5A-145F76A44C11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
