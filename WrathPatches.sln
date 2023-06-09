@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.33711.374
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WrathPatches", "WrathPatches\WrathPatches.csproj", "{2D651098-A88E-4BC8-8008-2D4414497A77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DE6A293-0C63-4588-A521-A577923C51A3}"
+	ProjectSection(SolutionItems) = preProject
+		common.props = common.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedStringsFix.patch", "SharedStringsFix.patch\SharedStringsFix.patch.csproj", "{50D86751-CEE4-4A37-A4CA-E22818CC07B9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Element.AssetGuidShort.patch", "Element.AssetGuidShort.patch\Element.AssetGuidShort.patch.csproj", "{4373063C-3110-4595-BFEF-5096DFB242EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaveMenu.AddDisposableFix.patch", "SaveMenu.AddDisposableFix.patch\SaveMenu.AddDisposableFix.patch.csproj", "{42A62427-9ADD-4A81-9A2D-090EE4EB89CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoBindingLogSpamFix.patch", "NoBindingLogSpamFix.patch\NoBindingLogSpamFix.patch.csproj", "{590B7DAC-D068-45DA-8416-EBA27FAD58CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D651098-A88E-4BC8-8008-2D4414497A77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D651098-A88E-4BC8-8008-2D4414497A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D651098-A88E-4BC8-8008-2D4414497A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D651098-A88E-4BC8-8008-2D4414497A77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50D86751-CEE4-4A37-A4CA-E22818CC07B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50D86751-CEE4-4A37-A4CA-E22818CC07B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50D86751-CEE4-4A37-A4CA-E22818CC07B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50D86751-CEE4-4A37-A4CA-E22818CC07B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4373063C-3110-4595-BFEF-5096DFB242EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4373063C-3110-4595-BFEF-5096DFB242EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4373063C-3110-4595-BFEF-5096DFB242EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4373063C-3110-4595-BFEF-5096DFB242EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42A62427-9ADD-4A81-9A2D-090EE4EB89CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42A62427-9ADD-4A81-9A2D-090EE4EB89CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42A62427-9ADD-4A81-9A2D-090EE4EB89CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42A62427-9ADD-4A81-9A2D-090EE4EB89CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{590B7DAC-D068-45DA-8416-EBA27FAD58CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{590B7DAC-D068-45DA-8416-EBA27FAD58CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{590B7DAC-D068-45DA-8416-EBA27FAD58CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{590B7DAC-D068-45DA-8416-EBA27FAD58CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ED66E901-F169-4704-980D-5A24E4C767D6}
+	EndGlobalSection
+EndGlobal
