@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 
 using Kingmaker.EntitySystem;
+using Kingmaker.EntitySystem.Entities;
 
 using Owlcat.Runtime.Core.Logging;
 
@@ -20,10 +21,11 @@ namespace WrathPatches
     [HarmonyPatch]
     public static class EntityFactComponent_ExceptionMessages
     {
+        // TODO: Make this better (share with DelegateExceptionMessage?)
         public static string ExceptionMessage(object? entityFactComponent) =>
             $"Exception occured in {entityFactComponent?.GetType()}.{nameof(EntityFactComponent.Activate)} ({entityFactComponent})";
 
-        static IEnumerable<CodeInstruction> PatchExceptionLog(IEnumerable<CodeInstruction> instructions, CodeInstruction exceptionMessage)
+        static IEnumerable<CodeInstruction> PatchExceptionLog(IEnumerable<CodeInstruction> instructions, CodeInstruction callExceptionMessage)
         {
             var iList = instructions.ToList();
 
@@ -32,7 +34,7 @@ namespace WrathPatches
                 nameof(LogChannel.Exception),
                 new[] { typeof(Exception), typeof(string), typeof(object[]) });
 
-            var iMatch = new Func<CodeInstruction, bool>[]
+            var matchLogChannelException = new Func<CodeInstruction, bool>[]
             {
                 ci => ci.IsStloc(),
                 ci => ci.opcode == OpCodes.Ldsfld && ci.operand is FieldInfo fi && fi.FieldType == typeof(LogChannel),
@@ -45,19 +47,12 @@ namespace WrathPatches
             var toInsert = new[]
             {
                 new CodeInstruction(OpCodes.Ldarg_0),
-                exceptionMessage
+                callExceptionMessage
             };
 
-            var x = instructions.FindInstructionsIndexed(iMatch);
+            var matched = instructions.FindInstructionsIndexed(matchLogChannelException);
 
-            //Main.Logger.Log("BEFORE");
-
-            //foreach (var i in x)
-            //{
-            //    Main.Logger.Log($"{i.index}: {i.instruction}");
-            //}
-
-            if (x.Count() != iMatch.Count())
+            if (matched.Count() != matchLogChannelException.Count())
             {
 #if DEBUG
                 Main.Logger.Log($"Could not find match");
@@ -66,20 +61,13 @@ namespace WrathPatches
                 return instructions;
             }
 
-            var ldnullOffset = x.First(ci => ci.instruction.opcode == OpCodes.Ldnull).index;
+            var ldnullOffset = matched.First(ci => ci.instruction.opcode == OpCodes.Ldnull).index;
 
             var exceptionBlocks = iList[ldnullOffset].blocks;
 
             iList.RemoveAt(ldnullOffset);
             //iList.InsertRange(ldnullOffset, toInsert.Select(ci => { ci.blocks = exceptionBlocks; return ci; }));
             iList.InsertRange(ldnullOffset, toInsert);
-
-            //Main.Logger.Log("AFTER");
-
-            //foreach (var i in iList.Indexed().Skip(x.First().index))
-            //{
-            //    Main.Logger.Log($"{i.index}: {i.item}");
-            //}
 
             return iList;
         }
@@ -95,20 +83,80 @@ namespace WrathPatches
             return PatchExceptionLog(instructions, CodeInstruction.Call<EntityFactComponent, string>(obj => ExceptionMessage(obj)));
         }
 
-        static string ExceptionMessageDelegate(object? componentRuntime) =>
-            $"Exception occured in {componentRuntime?.GetType()}.{nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate)} ({componentRuntime})";
+        static string DelegateExceptionMessage(object? componentRuntime)
+        {
+            if (componentRuntime?.GetType() is not { } type) return null!;
 
-        //[HarmonyPatch(typeof(EntityFactComponentDelegate.ComponentRuntime),
-        //    nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate))]
-        //[HarmonyTranspiler]
+            var maybeOwner = type.GetProperty("Owner", AccessTools.all)?.GetValue(componentRuntime);
+            var maybeFact = type.GetProperty("Fact", AccessTools.all)?.GetValue(componentRuntime);
+
+            var blueprint = (maybeFact as EntityFact)?.Blueprint;
+
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"Exception occured in {type}.{nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate)} ({componentRuntime})");
+
+            sb.Append("  Blueprint: ");
+            if (blueprint is { })
+            {
+                sb.Append($"{blueprint.AssetGuid}");
+                if (blueprint.name is not null)
+                    sb.Append($" ({blueprint.name})");
+            }
+            else
+                sb.Append("<null>");
+            sb.AppendLine();
+
+            sb.Append("  Owner: ");
+            if (maybeOwner is UnitEntityData owner)
+                sb.Append($"{owner?.CharacterName}");
+            else
+                sb.Append("<null>");
+            sb.AppendLine();
+
+            return sb.ToString();
+        }
+
+        static void ComponentRuntime_Delegate_OnActivate(object instance)
+        {
+            var t = instance.GetType();
+
+            var delegateProperty = t?.GetProperty("Delegate", AccessTools.all);
+            var delegateType = delegateProperty?.PropertyType;
+            var delegateOnActivate = delegateType?.GetMethod("OnActivate", AccessTools.all);
+
+            var @delegate = delegateProperty?.GetValue(instance);
+
+            delegateOnActivate!.Invoke(@delegate, null);
+        }
+
+        [HarmonyPatch(typeof(EntityFactComponentDelegate.ComponentRuntime),
+            nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate))]
+        [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> EntityFactComponentDelegate_ComponentRuntime_OnActivate_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
 #if DEBUG
             Main.Logger.Log($"{nameof(EntityFactComponentDelegate_ComponentRuntime_OnActivate_Transpiler)}");
 #endif
+            var iList = instructions.ToList();
+
+            var matchDelegateOnActivate = new Func<CodeInstruction, bool>[]
+            {
+                ci => ci.opcode == OpCodes.Ldarg_0,
+                ci => ci.opcode == OpCodes.Call,
+                ci => ci.opcode == OpCodes.Callvirt
+            };
+
+            var matched = iList.FindInstructionsIndexed(matchDelegateOnActivate).Select(i => i.instruction).ToArray();
+
+            if (!matched.Any()) return instructions;
+
+            matched[1].operand = CodeInstruction.Call((object instance) => ComponentRuntime_Delegate_OnActivate(instance)).operand;
+            matched[2].opcode = OpCodes.Nop;
+            matched[2].operand = null;
 
             return PatchExceptionLog(instructions,
-                CodeInstruction.Call<object, string>(obj => ExceptionMessageDelegate(obj)));
+                CodeInstruction.Call<object, string>(obj => DelegateExceptionMessage(obj)));
         }
     }
 }
