@@ -14,15 +14,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedStringsFix.patch", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Element.AssetGuidShort.patch", "Element.AssetGuidShort.patch\Element.AssetGuidShort.patch.csproj", "{4373063C-3110-4595-BFEF-5096DFB242EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SaveMenu.AddDisposableFix.patch", "SaveMenu.AddDisposableFix.patch\SaveMenu.AddDisposableFix.patch.csproj", "{42A62427-9ADD-4A81-9A2D-090EE4EB89CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SaveMenu.AddDisposableFix.patch", "SaveMenu.AddDisposableFix.patch\SaveMenu.AddDisposableFix.patch.csproj", "{42A62427-9ADD-4A81-9A2D-090EE4EB89CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoBindingLogSpamFix.patch", "NoBindingLogSpamFix.patch\NoBindingLogSpamFix.patch.csproj", "{590B7DAC-D068-45DA-8416-EBA27FAD58CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoBindingLogSpamFix.patch", "NoBindingLogSpamFix.patch\NoBindingLogSpamFix.patch.csproj", "{590B7DAC-D068-45DA-8416-EBA27FAD58CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitMarkManager.LateUpdateFix.patch", "UnitMarkManager.LateUpdateFix.patch\UnitMarkManager.LateUpdateFix.patch.csproj", "{92EA9A08-2930-4F25-A1A6-5496F28F444F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitMarkManager.LateUpdateFix.patch", "UnitMarkManager.LateUpdateFix.patch\UnitMarkManager.LateUpdateFix.patch.csproj", "{92EA9A08-2930-4F25-A1A6-5496F28F444F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStatistic.Tick.PlayerNullFix.patch", "GameStatistic.Tick.PlayerNullFix.patch\GameStatistic.Tick.PlayerNullFix.patch.csproj", "{5EBA07B0-6C9C-40D6-AC5A-145F76A44C11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameStatistic.Tick.PlayerNullFix.patch", "GameStatistic.Tick.PlayerNullFix.patch\GameStatistic.Tick.PlayerNullFix.patch.csproj", "{5EBA07B0-6C9C-40D6-AC5A-145F76A44C11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AwaitEventSystemFix.patch", "AwaitEventSystemFix.patch\AwaitEventSystemFix.patch.csproj", "{44018B29-140C-41C6-A7E4-2C34665B368B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AwaitEventSystemFix.patch", "AwaitEventSystemFix.patch\AwaitEventSystemFix.patch.csproj", "{44018B29-140C-41C6-A7E4-2C34665B368B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFactComponentExceptionMessages.patch", "EntityFactComponentExceptionMessages.patch\EntityFactComponentExceptionMessages.patch.csproj", "{50DB6259-1006-4039-ADC1-53460229C125}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,10 @@ Global
 		{44018B29-140C-41C6-A7E4-2C34665B368B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44018B29-140C-41C6-A7E4-2C34665B368B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44018B29-140C-41C6-A7E4-2C34665B368B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50DB6259-1006-4039-ADC1-53460229C125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50DB6259-1006-4039-ADC1-53460229C125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50DB6259-1006-4039-ADC1-53460229C125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50DB6259-1006-4039-ADC1-53460229C125}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

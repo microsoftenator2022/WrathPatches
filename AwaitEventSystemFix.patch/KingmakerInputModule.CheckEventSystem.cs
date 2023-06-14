@@ -57,9 +57,11 @@ namespace WrathPatches.Experimental
             
             foreach ((var index, var _) in iMatch)
             {
-                var i = new CodeInstruction(OpCodes.Nop);
-                i.labels = iList[index].labels;
-                i.blocks = iList[index].blocks;
+                var i = new CodeInstruction(OpCodes.Nop)
+                {
+                    labels = iList[index].labels,
+                    blocks = iList[index].blocks
+                };
                 iList[index] = i;
             }
 
