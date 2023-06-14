@@ -87,38 +87,64 @@ namespace WrathPatches
         {
             if (componentRuntime?.GetType() is not { } type) return null!;
 
-            var maybeOwner = type.GetProperty("Owner", AccessTools.all)?.GetValue(componentRuntime);
-            var maybeFact = type.GetProperty("Fact", AccessTools.all)?.GetValue(componentRuntime);
-
-            var blueprint = (maybeFact as EntityFact)?.Blueprint;
-
-            var sb = new StringBuilder();
-
-            sb.AppendLine($"Exception occured in {type}.{nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate)} ({componentRuntime})");
-
-            sb.Append("  Blueprint: ");
-            if (blueprint is { })
+            try
             {
-                sb.Append($"{blueprint.AssetGuid}");
-                if (blueprint.name is not null)
-                    sb.Append($" ({blueprint.name})");
+//#if DEBUG
+//                Main.Logger.Log($"{type} Properties:");
+
+//                foreach (var p in type.GetProperties(AccessTools.all))
+//                {
+//                    Main.Logger.Log($"{p.PropertyType} {p.DeclaringType}.{p.Name}");
+//                }
+//#endif
+
+
+                //var maybeOwner = type.GetProperty("Owner", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)?.GetValue(componentRuntime);
+                var maybeOwner = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+                    ?.FirstOrDefault(pi => pi.Name == "Owner" && pi.PropertyType == typeof(UnitEntityData))
+                    ?.GetValue(componentRuntime);
+
+                var maybeFact = type.GetProperty("Fact", AccessTools.all)?.GetValue(componentRuntime);
+
+                var blueprint = (maybeFact as EntityFact)?.Blueprint;
+
+                var sb = new StringBuilder();
+
+                sb.AppendLine($"Exception occured in {type}.{nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate)} ({componentRuntime})");
+
+                sb.Append("  Blueprint: ");
+                if (blueprint is { })
+                {
+                    sb.Append($"{blueprint.AssetGuid}");
+                    if (blueprint.name is not null)
+                        sb.Append($" ({blueprint.name})");
+                }
+                else
+                    sb.Append("<null>");
+                sb.AppendLine();
+
+                sb.Append("  Owner: ");
+                if (maybeOwner is UnitEntityData owner)
+                    sb.Append($"{owner?.CharacterName}");
+                else
+                    sb.Append("<null>");
+                sb.AppendLine();
+
+                return sb.ToString();
             }
-            else
-                sb.Append("<null>");
-            sb.AppendLine();
+            catch (Exception ex)
+            {
+                Main.Logger.Error("Exception occured generating exception message");
+                Main.Logger.LogException(ex);
 
-            sb.Append("  Owner: ");
-            if (maybeOwner is UnitEntityData owner)
-                sb.Append($"{owner?.CharacterName}");
-            else
-                sb.Append("<null>");
-            sb.AppendLine();
-
-            return sb.ToString();
+                return null!;
+            }
         }
 
         static void ComponentRuntime_Delegate_OnActivate(object instance)
         {
+            //Main.Logger.Log(nameof(ComponentRuntime_Delegate_OnActivate));
+
             var t = instance.GetType();
 
             var delegateProperty = t?.GetProperty("Delegate", AccessTools.all);
@@ -126,6 +152,19 @@ namespace WrathPatches
             var delegateOnActivate = delegateType?.GetMethod("OnActivate", AccessTools.all);
 
             var @delegate = delegateProperty?.GetValue(instance);
+
+            //if (@delegate is null)
+            //{
+            //    var sb = new StringBuilder();
+            //    sb.AppendLine($"Could not get delegate");
+
+            //    sb.AppendLine($"Type: {t}");
+            //    sb.AppendLine($"Property Type: {delegateProperty}");
+            //    sb.AppendLine($"Property: {@delegate?.ToString() ?? "<null>"}");
+            //    sb.AppendLine($"Delegate.OnActivate Method: {delegateOnActivate}");
+
+            //    Main.Logger.Error(sb.ToString());
+            //}
 
             delegateOnActivate!.Invoke(@delegate, null);
         }
