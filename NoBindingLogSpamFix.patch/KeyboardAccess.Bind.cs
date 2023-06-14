@@ -31,4 +31,24 @@ namespace WrathPatches
             return iList;
         }
     }
+    [HarmonyPatch(typeof(KeyboardAccess), nameof(KeyboardAccess.DoUnbind))]
+    internal static class KeyboardAccess_DoUnbind_Patch
+    {
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var iList = instructions.ToList();
+            var (index, i) = iList.Take(45).Indexed().First(i => i.item.opcode == OpCodes.Brfalse_S);
+
+            //Main.Logger.Log($"{index}: {iList[index]}");
+
+            iList[index] = new CodeInstruction(OpCodes.Br, i.operand);
+            iList.Insert(index, new CodeInstruction(OpCodes.Pop));
+
+            //Main.Logger.Log($"{index}: {iList[index]}");
+            //Main.Logger.Log($"{index}: {iList[index + 1]}");
+
+            return iList;
+        }
+    }
 }

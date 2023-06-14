@@ -177,16 +177,14 @@ namespace WrathPatches
 #if DEBUG
             Main.Logger.Log($"{nameof(EntityFactComponentDelegate_ComponentRuntime_OnActivate_Transpiler)}");
 #endif
-            var iList = instructions.ToList();
-
             var matchDelegateOnActivate = new Func<CodeInstruction, bool>[]
             {
                 ci => ci.opcode == OpCodes.Ldarg_0,
-                ci => ci.opcode == OpCodes.Call,
+                ci => ci.opcode == OpCodes.Call, // instance method of generic type, throws InvalidCastException
                 ci => ci.opcode == OpCodes.Callvirt
             };
 
-            var matched = iList.FindInstructionsIndexed(matchDelegateOnActivate).Select(i => i.instruction).ToArray();
+            var matched = instructions.FindInstructionsIndexed(matchDelegateOnActivate).Select(i => i.instruction).ToArray();
 
             if (!matched.Any()) return instructions;
 
