@@ -36,7 +36,7 @@ namespace WrathPatches.Experimental
             void ILogSink.Log(LogInfo logInfo)
             {
 #if DEBUG
-                Main.Logger.Log(string.Join(typeof(ShortLogWithoutCallstacks).ToString(), ".", nameof(Log)));
+                Main.Logger.Log(string.Join(nameof(ShortLogWithoutCallstacks), ".", nameof(Log)));
                 Main.Logger.Log($"IsException? {logInfo.IsException}");
                 Main.Logger.Log(logInfo.Message);
 #endif
