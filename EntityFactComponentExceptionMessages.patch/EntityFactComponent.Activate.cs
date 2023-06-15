@@ -46,6 +46,7 @@ namespace WrathPatches
 
             var toInsert = new[]
             {
+                new CodeInstruction(OpCodes.Call, typeof(Exception).GetProperty(nameof(Exception.InnerException)).GetGetMethod()),
                 new CodeInstruction(OpCodes.Ldarg_0),
                 callExceptionMessage
             };
@@ -151,7 +152,7 @@ namespace WrathPatches
             var delegateType = delegateProperty?.PropertyType;
             var delegateOnActivate = delegateType?.GetMethod("OnActivate", AccessTools.all);
 
-            var @delegate = delegateProperty?.GetValue(instance);
+            //var @delegate = delegateProperty?.GetValue(instance);
 
             //if (@delegate is null)
             //{
@@ -166,7 +167,14 @@ namespace WrathPatches
             //    Main.Logger.Error(sb.ToString());
             //}
 
-            delegateOnActivate!.Invoke(@delegate, null);
+            //delegateOnActivate!.Invoke(@delegate, null);
+
+            var objectExpr = Expression.Parameter(t, "instance");
+            var getDelegateExpr = Expression.PropertyOrField(objectExpr, "Delegate");
+            var callOnActivate = Expression.Call(getDelegateExpr, delegateOnActivate);
+
+            var lambda = Expression.Lambda(callOnActivate, objectExpr);
+            lambda.Compile().DynamicInvoke(instance);
         }
 
         [HarmonyPatch(typeof(EntityFactComponentDelegate.ComponentRuntime),
