@@ -56,6 +56,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Experimental\" />
+  </ItemGroup>
+
   <Target Name="Publicize" AfterTargets="BeforeBuild;Clean" Inputs="@(Publicize)" Outputs="$(SolutionDir)lib\%(Publicize.Filename)_public.dll">
     <PublicizeTask InputAssemblies="@(Publicize)" OutputDir="$(SolutionDir)lib\" />
   </Target>

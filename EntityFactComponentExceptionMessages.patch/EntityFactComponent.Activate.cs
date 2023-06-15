@@ -98,7 +98,6 @@ namespace WrathPatches
 //                }
 //#endif
 
-
                 //var maybeOwner = type.GetProperty("Owner", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)?.GetValue(componentRuntime);
                 var maybeOwner = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
                     ?.FirstOrDefault(pi => pi.Name == "Owner" && pi.PropertyType == typeof(UnitEntityData))
@@ -111,6 +110,7 @@ namespace WrathPatches
                 var sb = new StringBuilder();
 
                 sb.AppendLine($"Exception occured in {type}.{nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate)} ({componentRuntime})");
+                sb.AppendLine($"  Delegate type: {type.GetProperty("Delegate", AccessTools.all)?.PropertyType}");
 
                 sb.Append("  Blueprint: ");
                 if (blueprint is { })

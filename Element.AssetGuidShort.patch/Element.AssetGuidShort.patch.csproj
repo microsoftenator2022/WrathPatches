@@ -35,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Assembly-CSharp-firstpass" HintPath="$(SolutionDir)lib\Assembly-CSharp-firstpass_public.dll" Private="False" />
     <Reference Include="Assembly-CSharp" HintPath="$(SolutionDir)lib\Assembly-CSharp_public.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.UI" HintPath="$(SolutionDir)lib\Owlcat.Runtime.UI_public.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.Core" HintPath="$(SolutionDir)lib\Owlcat.Runtime.Core_public.dll" Private="False" />
