@@ -21,9 +21,42 @@ namespace WrathPatches
     [HarmonyPatch]
     public static class EntityFactComponent_ExceptionMessages
     {
+        static string PrintBlueprintAndOwner(EntityFact? fact)
+        {
+            var blueprint = fact?.Blueprint;
+            var maybeOwner = fact?.Owner;
+
+            var sb = new StringBuilder();
+
+            sb.Append("  Blueprint: ");
+            if (blueprint is { })
+            {
+                sb.Append($"{blueprint.AssetGuid}");
+                if (blueprint.name is not null)
+                    sb.Append($" ({blueprint.name})");
+            }
+            else
+                sb.Append("<null>");
+            sb.AppendLine();
+
+            sb.Append("  Owner: ");
+            if (maybeOwner is UnitEntityData owner)
+                sb.Append($"{owner?.CharacterName}");
+            else
+                sb.Append("<null>");
+            sb.AppendLine();
+
+            return sb.ToString();
+        }
+
         // TODO: Make this better (share with DelegateExceptionMessage?)
-        public static string ExceptionMessage(object? entityFactComponent) =>
-            $"Exception occured in {entityFactComponent?.GetType()}.{nameof(EntityFactComponent.Activate)} ({entityFactComponent})";
+        public static string ExceptionMessage(object? entityFactComponent)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Exception occured in {entityFactComponent?.GetType()}.{nameof(EntityFactComponent.Activate)} ({entityFactComponent})");
+            sb.AppendLine(PrintBlueprintAndOwner((entityFactComponent as EntityFactComponent)?.Fact));
+            return sb.ToString();
+        }
 
         static IEnumerable<CodeInstruction> PatchExceptionLog(IEnumerable<CodeInstruction> instructions, CodeInstruction callExceptionMessage)
         {
@@ -100,36 +133,38 @@ namespace WrathPatches
 //#endif
 
                 //var maybeOwner = type.GetProperty("Owner", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)?.GetValue(componentRuntime);
-                var maybeOwner = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
-                    ?.FirstOrDefault(pi => pi.Name == "Owner" && pi.PropertyType == typeof(UnitEntityData))
-                    ?.GetValue(componentRuntime);
+                //var maybeOwner = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+                //    ?.FirstOrDefault(pi => pi.Name == "Owner" && pi.PropertyType == typeof(UnitEntityData))
+                //    ?.GetValue(componentRuntime);
 
                 var maybeFact = type.GetProperty("Fact", AccessTools.all)?.GetValue(componentRuntime);
 
-                var blueprint = (maybeFact as EntityFact)?.Blueprint;
+                //var blueprint = (maybeFact as EntityFact)?.Blueprint;
 
                 var sb = new StringBuilder();
 
                 sb.AppendLine($"Exception occured in {type}.{nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate)} ({componentRuntime})");
                 sb.AppendLine($"  Delegate type: {type.GetProperty("Delegate", AccessTools.all)?.PropertyType}");
 
-                sb.Append("  Blueprint: ");
-                if (blueprint is { })
-                {
-                    sb.Append($"{blueprint.AssetGuid}");
-                    if (blueprint.name is not null)
-                        sb.Append($" ({blueprint.name})");
-                }
-                else
-                    sb.Append("<null>");
-                sb.AppendLine();
+                sb.Append(PrintBlueprintAndOwner(maybeFact as EntityFact));
 
-                sb.Append("  Owner: ");
-                if (maybeOwner is UnitEntityData owner)
-                    sb.Append($"{owner?.CharacterName}");
-                else
-                    sb.Append("<null>");
-                sb.AppendLine();
+                //sb.Append("  Blueprint: ");
+                //if (blueprint is { })
+                //{
+                //    sb.Append($"{blueprint.AssetGuid}");
+                //    if (blueprint.name is not null)
+                //        sb.Append($" ({blueprint.name})");
+                //}
+                //else
+                //    sb.Append("<null>");
+                //sb.AppendLine();
+
+                //sb.Append("  Owner: ");
+                //if (maybeOwner is UnitEntityData owner)
+                //    sb.Append($"{owner?.CharacterName}");
+                //else
+                //    sb.Append("<null>");
+                //sb.AppendLine();
 
                 return sb.ToString();
             }
