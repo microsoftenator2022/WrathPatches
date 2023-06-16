@@ -24,7 +24,7 @@ Improves the log messages for exceptions in `EntityFactComponent.Activate` and
 
 ### GameStatistic.Tick null Player fix
 
-Adds a missing null check in GameStatistic.Tick
+Adds a missing null check in `GameStatistic.Tick`
 
 ### Better short log exception entries
 
