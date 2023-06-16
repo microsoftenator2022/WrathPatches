@@ -144,7 +144,12 @@ namespace WrathPatches
                 var sb = new StringBuilder();
 
                 sb.AppendLine($"Exception occured in {type}.{nameof(EntityFactComponentDelegate.ComponentRuntime.OnActivate)} ({componentRuntime})");
-                sb.AppendLine($"  Delegate type: {type.GetProperty("Delegate", AccessTools.all)?.PropertyType}");
+
+                var delegateProperty = type.GetProperty("Delegate", AccessTools.all);
+                var delegateObj = delegateProperty?.GetValue(componentRuntime);
+                var delegateType = delegateObj?.GetType();
+
+                sb.AppendLine($"  Delegate type: {delegateType?.ToString() ?? delegateProperty?.GetType()?.ToString()}");
 
                 sb.Append(PrintBlueprintAndOwner(maybeFact as EntityFact));
 
