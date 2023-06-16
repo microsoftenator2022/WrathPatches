@@ -4,5 +4,11 @@
   "AssemblyName": "WrathPatches.dll",
   "EntryMethod": "WrathPatches.Main.Load",
 
-  "DisplayName": "Patches"
+  "DisplayName": "Wrath Patches",
+  "Author": "microsoftenator",
+
+  "GameVersion": "2.1.4",
+
+  "HomePage": "https://github.com/microsoftenator2022/WrathPatches",
+  "Repository": "https://raw.githubusercontent.com/microsoftenator2022/WrathPatches/master/Repository.json"
 }

@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4DE6A293-0C63-4588-A521-A577923C51A3}"
 	ProjectSection(SolutionItems) = preProject
 		common.props = common.props
+		Repository.json = Repository.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedStringsFix.patch", "SharedStringsFix.patch\SharedStringsFix.patch.csproj", "{50D86751-CEE4-4A37-A4CA-E22818CC07B9}"
@@ -26,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AwaitEventSystemFix.patch",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFactComponentExceptionMessages.patch", "EntityFactComponentExceptionMessages.patch\EntityFactComponentExceptionMessages.patch.csproj", "{50DB6259-1006-4039-ADC1-53460229C125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LessVerboseShortLogExceptions.patch", "LessVerboseShortLogExceptions.patch\LessVerboseShortLogExceptions.patch.csproj", "{41C390A2-483C-4BE8-887D-8B5AD6CDFA4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LessVerboseShortLogExceptions.patch", "LessVerboseShortLogExceptions.patch\LessVerboseShortLogExceptions.patch.csproj", "{41C390A2-483C-4BE8-887D-8B5AD6CDFA4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
