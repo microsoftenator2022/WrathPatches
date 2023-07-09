@@ -13,7 +13,7 @@ using Kingmaker.Logging.Configuration.Platforms;
 
 using Owlcat.Runtime.Core.Logging;
 
-namespace WrathPatches.Experimental
+namespace WrathPatches
 {
     [HarmonyPatch]
     internal static class Log_Exceptions_Patch
@@ -24,7 +24,7 @@ namespace WrathPatches.Experimental
                 : base(filename, path, includeCallStacks, extendedLog)
             {
 #if DEBUG
-                Main.Logger.Log(string.Join("new", typeof(ShortLogWithoutCallstacks)));
+                Main.Logger.Log(string.Join(" ", "new", typeof(ShortLogWithoutCallstacks)));
 
                 if (this.LogFileWriter.BaseStream is not FileStream fs)
                     Main.Logger.Error($"{nameof(LogFileWriter)} is not a FileStream");
@@ -36,7 +36,7 @@ namespace WrathPatches.Experimental
             void ILogSink.Log(LogInfo logInfo)
             {
 #if DEBUG
-                Main.Logger.Log(string.Join(nameof(ShortLogWithoutCallstacks), ".", nameof(Log)));
+                Main.Logger.Log(string.Join(".", nameof(ShortLogWithoutCallstacks), nameof(Log)));
                 Main.Logger.Log($"IsException? {logInfo.IsException}");
                 Main.Logger.Log(logInfo.Message);
 #endif

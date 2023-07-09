@@ -11,7 +11,7 @@ using Kingmaker.UI.Selection;
 
 using WrathPatches.TranspilerUtil;
 
-namespace WrathPatches.Experimental
+namespace WrathPatches
 {
     [HarmonyPatch(typeof(UnitMarkManager), nameof(UnitMarkManager.LateUpdate))]
     internal static class UnitMarkManager_LateUpdate
@@ -33,24 +33,10 @@ namespace WrathPatches.Experimental
 
             if (!iMatch.Any()) return instructions;
 
-            //Main.Logger.Log("MATCH");
-
-            //foreach ((var index, var instruction) in iMatch)
-            //{
-            //    Main.Logger.Log($"{index}: {instruction}");
-            //}
-
             var index = iMatch.First().index + 2;
 
             iList.Insert(index, new CodeInstruction(OpCodes.Newobj,
                 AccessTools.Constructor(typeof(Dictionary<string, UIDecalBase>), new[] { typeof(Dictionary<string, UIDecalBase>) } )));
-
-            //Main.Logger.Log("AFTER");
-
-            //foreach ((var index, var instruction) in iList.Indexed().Skip(offset))
-            //{
-            //    Main.Logger.Log($"{index}: {instruction}");
-            //}
 
             return iList;
         }

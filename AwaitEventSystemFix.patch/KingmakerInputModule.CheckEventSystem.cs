@@ -15,7 +15,7 @@ using Owlcat.Runtime.Core.Logging;
 
 using WrathPatches.TranspilerUtil;
 
-namespace WrathPatches.Experimental
+namespace WrathPatches
 {
     [HarmonyPatch]
     internal static class KingmakerInputModule_CheckEventSystem

@@ -49,7 +49,6 @@ namespace WrathPatches
             return sb.ToString();
         }
 
-        // TODO: Make this better (share with DelegateExceptionMessage?)
         public static string ExceptionMessage(object? entityFactComponent)
         {
             var sb = new StringBuilder();
@@ -123,20 +122,6 @@ namespace WrathPatches
 
             try
             {
-//#if DEBUG
-//                Main.Logger.Log($"{type} Properties:");
-
-//                foreach (var p in type.GetProperties(AccessTools.all))
-//                {
-//                    Main.Logger.Log($"{p.PropertyType} {p.DeclaringType}.{p.Name}");
-//                }
-//#endif
-
-                //var maybeOwner = type.GetProperty("Owner", BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)?.GetValue(componentRuntime);
-                //var maybeOwner = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
-                //    ?.FirstOrDefault(pi => pi.Name == "Owner" && pi.PropertyType == typeof(UnitEntityData))
-                //    ?.GetValue(componentRuntime);
-
                 var maybeFact = type.GetProperty("Fact", AccessTools.all)?.GetValue(componentRuntime);
 
                 //var blueprint = (maybeFact as EntityFact)?.Blueprint;
@@ -152,24 +137,6 @@ namespace WrathPatches
                 sb.AppendLine($"  Delegate type: {delegateType?.ToString() ?? delegateProperty?.GetType()?.ToString()}");
 
                 sb.Append(PrintBlueprintAndOwner(maybeFact as EntityFact));
-
-                //sb.Append("  Blueprint: ");
-                //if (blueprint is { })
-                //{
-                //    sb.Append($"{blueprint.AssetGuid}");
-                //    if (blueprint.name is not null)
-                //        sb.Append($" ({blueprint.name})");
-                //}
-                //else
-                //    sb.Append("<null>");
-                //sb.AppendLine();
-
-                //sb.Append("  Owner: ");
-                //if (maybeOwner is UnitEntityData owner)
-                //    sb.Append($"{owner?.CharacterName}");
-                //else
-                //    sb.Append("<null>");
-                //sb.AppendLine();
 
                 return sb.ToString();
             }
@@ -191,23 +158,6 @@ namespace WrathPatches
             var delegateProperty = t?.GetProperty("Delegate", AccessTools.all);
             var delegateType = delegateProperty?.PropertyType;
             var delegateOnActivate = delegateType?.GetMethod("OnActivate", AccessTools.all);
-
-            //var @delegate = delegateProperty?.GetValue(instance);
-
-            //if (@delegate is null)
-            //{
-            //    var sb = new StringBuilder();
-            //    sb.AppendLine($"Could not get delegate");
-
-            //    sb.AppendLine($"Type: {t}");
-            //    sb.AppendLine($"Property Type: {delegateProperty}");
-            //    sb.AppendLine($"Property: {@delegate?.ToString() ?? "<null>"}");
-            //    sb.AppendLine($"Delegate.OnActivate Method: {delegateOnActivate}");
-
-            //    Main.Logger.Error(sb.ToString());
-            //}
-
-            //delegateOnActivate!.Invoke(@delegate, null);
 
             var objectExpr = Expression.Parameter(t, "instance");
             var getDelegateExpr = Expression.PropertyOrField(objectExpr, "Delegate");
