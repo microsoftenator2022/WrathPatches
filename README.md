@@ -9,6 +9,10 @@ Thanks to @Kurufinve on the Owlcat discord for the assistance and inspiration.
 
 ## Current fixes
 
+### TypeId fix for Owlcat mods
+
+Allows the use of types (eg. Components) from (Owlcat) mod assemblies in jbp files
+
 ### "Await event system" fix
 
 Removes the "Await event system" log entries (which mostly only happens when using Unity Explorer).
