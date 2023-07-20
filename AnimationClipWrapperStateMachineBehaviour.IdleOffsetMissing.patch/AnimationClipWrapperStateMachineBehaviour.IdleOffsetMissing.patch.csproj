@@ -10,7 +10,11 @@
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <OutDir>$(SolutionDir)\bin\$(Configuration)\$(TargetFramework)\$(SolutionName)</OutDir>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <ProjectReference Include="..\WrathPatches\WrathPatches.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <Reference Include="0Harmony" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityModManager\0Harmony.dll" Private="False" />
     <Reference Include="Newtonsoft.Json" HintPath="$(WrathPath)\Wrath_Data\Managed\Newtonsoft.Json.dll" Private="False" />
@@ -37,44 +41,12 @@
     <Reference Include="Owlcat.Runtime.Core" HintPath="$(SolutionDir)lib\Owlcat.Runtime.Core_public.dll" Private="False" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AssemblyPublicizer" Version="1.0.2">
-      <PrivateAssets>none</PrivateAssets>
-      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll" />
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp.dll" />
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UI.dll" />
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Info.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Experimental\" />
-  </ItemGroup>
-
-  <Target Name="Publicize" AfterTargets="BeforeBuild;Clean" Inputs="@(Publicize)" Outputs="$(SolutionDir)lib\%(Publicize.Filename)_public.dll">
-    <PublicizeTask InputAssemblies="@(Publicize)" OutputDir="$(SolutionDir)lib\" />
-  </Target>
-
   <Target Name="Deploy" AfterTargets="Build">
     <ItemGroup>
       <Files Include="$(SolutionDir)\bin\$(Configuration)\$(TargetFramework)\$(SolutionName)\**\*.*" />
     </ItemGroup>
 
     <Copy SourceFiles="@(Files)" DestinationFolder="$(WrathPath)\Mods\$(SolutionName)" />
-  </Target>
-
-  <Target Name="ZipRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
-    <ZipDirectory SourceDirectory="$(OutDir)" DestinationFile="$(SolutionDir)\bin\$(SolutionName)-$(Version).zip" Overwrite="true" />
   </Target>
 
 </Project>
