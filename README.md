@@ -9,6 +9,8 @@ Thanks to @Kurufinve on the Owlcat discord for the assistance and inspiration.
 
 ## Current fixes
 
+Not an exhaustive list. Some logspam fixes omitted.
+
 ### TypeId fix for Owlcat mods
 
 Allows the use of types (eg. Components) from (Owlcat) mod assemblies in jbp files
