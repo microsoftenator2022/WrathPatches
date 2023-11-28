@@ -16,6 +16,7 @@ using System.Reflection;
 
 namespace WrathPatches
 {
+    [WrathPatch("Fix Shared Strings")]
     [HarmonyPatch]
     public static class ActuallyFixSharedStrings
     {

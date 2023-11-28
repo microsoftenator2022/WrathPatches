@@ -15,6 +15,7 @@ using Owlcat.Runtime.Core.Logging;
 
 namespace WrathPatches
 {
+    [WrathPatch("Less verbose short log exceptions")]
     [HarmonyPatch]
     internal static class Log_Exceptions_Patch
     {

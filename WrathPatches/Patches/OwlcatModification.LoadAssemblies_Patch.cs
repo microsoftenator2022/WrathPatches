@@ -9,6 +9,7 @@ using Kingmaker.Modding;
 
 namespace WrathPatches
 {
+    [WrathPatch("Add components from mod assemblies to binder cache")]
     [HarmonyPatch(typeof(OwlcatModification), "LoadAssemblies")]
     internal static class OwlcatModification_LoadAssemblies_Patch
     {

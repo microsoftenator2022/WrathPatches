@@ -18,6 +18,7 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches
 {
+    [WrathPatch("Better EntityFactComponent error messages")]
     [HarmonyPatch]
     public static class EntityFactComponent_ExceptionMessages
     {

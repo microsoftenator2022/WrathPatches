@@ -17,6 +17,7 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches
 {
+    [WrathPatch("Silence 'Await event system' messages")]
     [HarmonyPatch]
     internal static class KingmakerInputModule_CheckEventSystem
     {

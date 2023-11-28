@@ -11,6 +11,7 @@ using Kingmaker;
 
 namespace WrathPatches
 {
+    [WrathPatch("GameStatistic.Tick null Player fix")]
     [HarmonyPatch(typeof(GameStatistic), nameof(GameStatistic.Tick))]
     internal static class GameStatistic_Tick_PlayerNullFix
     {

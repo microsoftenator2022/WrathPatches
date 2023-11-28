@@ -11,6 +11,7 @@ using Kingmaker.ElementsSystem;
 
 namespace WrathPatches
 {
+    [WrathPatch("Element AssetGuid null fix")]
     [HarmonyPatch(typeof(Element))]
     static class Element_AssetGuidShort_Fix
     {

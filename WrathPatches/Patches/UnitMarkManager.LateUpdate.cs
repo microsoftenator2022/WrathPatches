@@ -13,6 +13,7 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches
 {
+    [WrathPatch("Fix UnitMarkManager.LateUpdate iterator mutation")]
     [HarmonyPatch(typeof(UnitMarkManager), nameof(UnitMarkManager.LateUpdate))]
     internal static class UnitMarkManager_LateUpdate
     {

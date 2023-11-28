@@ -10,6 +10,7 @@ using Kingmaker.UI.MVVM._VM.SaveLoad;
 
 namespace WrathPatches
 {
+    [WrathPatch("Fix save slot VM double bind")]
     [HarmonyPatch(typeof(SaveSlotGroupVM), nameof(SaveSlotGroupVM.HandleNewSave))]
     internal static class SaveSlotGroupVM_HandleNewSave
     {

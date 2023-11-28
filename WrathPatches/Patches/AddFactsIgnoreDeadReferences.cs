@@ -44,6 +44,7 @@ namespace WrathPatches
                             typeof(Func<object, object>).GetGenericTypeDefinition();
                 }).MakeGenericMethod(typeof(UnitFact));
 
+        [WrathPatch("AddFacts.UpdateFacts NRE fix")]
         [HarmonyPatch(typeof(AddFacts), nameof(AddFacts.UpdateFacts))]
         static class AddFacts_UpdateFacts_Patch
         {

@@ -12,6 +12,7 @@ using Kingmaker.Visual.Animation.Events;
 
 namespace WrathPatches
 {
+    [WrathPatch("Silence missing animator state errors")]
     [HarmonyPatch(typeof(AnimationClipWrapperStateMachineBehaviour))]
     internal static class AnimationClipWrapperStateMachineBehaviour_Patch
     {

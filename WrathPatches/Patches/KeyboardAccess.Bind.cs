@@ -11,11 +11,13 @@ using Kingmaker.UI;
 
 namespace WrathPatches
 {
-    [HarmonyPatch(typeof(KeyboardAccess), nameof(KeyboardAccess.Bind))]
+    [WrathPatch("Silence 'no binding' warnings")]
+    [HarmonyPatch]
     internal static class KeyboardAccess_Bind_Patch
     {
+        [HarmonyPatch(typeof(KeyboardAccess), nameof(KeyboardAccess.Bind))]
         [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        static IEnumerable<CodeInstruction> Bind_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var iList = instructions.ToList();
             var (index, i) = iList.Take(45).Indexed().First(i => i.item.opcode == OpCodes.Brfalse_S);
@@ -30,12 +32,10 @@ namespace WrathPatches
 
             return iList;
         }
-    }
-    [HarmonyPatch(typeof(KeyboardAccess), nameof(KeyboardAccess.DoUnbind))]
-    internal static class KeyboardAccess_DoUnbind_Patch
-    {
+
+        [HarmonyPatch(typeof(KeyboardAccess), nameof(KeyboardAccess.DoUnbind))]
         [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        static IEnumerable<CodeInstruction> Unbind_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var iList = instructions.ToList();
             var (index, i) = iList.Take(45).Indexed().First(i => i.item.opcode == OpCodes.Brfalse_S);
