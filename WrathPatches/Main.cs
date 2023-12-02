@@ -6,12 +6,6 @@ using System.Reflection;
 
 using HarmonyLib;
 
-using Kingmaker.Blueprints.Classes.Selection;
-
-using Newtonsoft.Json;
-
-using TMPro;
-
 using UnityEngine;
 
 using UnityModManagerNet;
@@ -74,8 +68,8 @@ namespace WrathPatches
         //    //public bool PatchIsEnabled(string patchName) => !DisabledPatches.Contains(patchName);
         //}
 
-        static readonly Font emojiFont = Font.CreateDynamicFontFromOSFont("Segoe UI Emoji", 12);
-        static readonly Font textFont = Font.CreateDynamicFontFromOSFont("Segoe UI", 12);
+        //static readonly Font emojiFont = Font.CreateDynamicFontFromOSFont("Segoe UI Emoji", 12);
+        //static readonly Font textFont = Font.CreateDynamicFontFromOSFont("Segoe UI", 12);
 
         static void OnGUI(UnityModManager.ModEntry _)
         {
@@ -99,31 +93,51 @@ namespace WrathPatches
                         if (IsExperimental(pc))
                             name = $"(Experimental) {name}";
 
-                        GUILayout.BeginHorizontal(GUILayout.Height(textFont.lineHeight));
-                        {
-                            GUILayout.BeginVertical(GUILayout.Width(20));
-                            {
-                                GUILayout.Space((textFont.lineHeight - textFont.ascent) + (emojiFont.lineHeight - emojiFont.ascent));
+                        GUILayout.Toggle(applied is true, name);
 
-                                GUI.skin.label.font = emojiFont;
+                        //GUILayout.BeginHorizontal(GUILayout.Height(textFont.lineHeight));
+                        //{
+                        //    GUILayout.BeginVertical(GUILayout.Width(20));
+                        //    {
+                        //        GUILayout.Space((textFont.lineHeight - textFont.ascent) + (emojiFont.lineHeight - emojiFont.ascent));
 
-                                GUILayout.Label($"{(applied is { } x ? (x ? "✅" : "❎") : "")}", GUILayout.Width(20));
+                        //        GUI.skin.label.font = emojiFont;
+                        //        var fc = GUI.skin.label.font.material.color;
+                                
+                        //        var c = '✅';
+                                
+                        //        if (applied is not { } x)
+                        //        {
+                        //            GUI.skin.label.font.material.color = Color.gray;
+                        //        }
+                        //        else if (x)
+                        //        {
+                        //            GUI.skin.label.font.material.color = Color.green;
+                        //        }
+                        //        else
+                        //        {
+                        //            GUI.skin.label.font.material.color = Color.red;
+                        //            c = '❎';
+                        //        }
+                                
+                        //        GUILayout.Label(c.ToString(), GUILayout.Width(20));
 
-                                GUI.skin.label.font = font;
-                            }
-                            GUILayout.EndVertical();
+                        //        GUI.skin.label.font.material.color = fc;
+                        //        GUI.skin.label.font = font;
+                        //    }
+                        //    GUILayout.EndVertical();
 
-                            GUILayout.BeginVertical();
-                            {
-                                GUI.skin.label.font = textFont;
+                        //    GUILayout.BeginVertical();
+                        //    {
+                        //        GUI.skin.label.font = textFont;
 
-                                GUILayout.Label(name);
+                        //        GUILayout.Label(name);
 
-                                GUI.skin.label.font = font;
-                            }
-                            GUILayout.EndVertical();
-                        }
-                        GUILayout.EndHorizontal();
+                        //        GUI.skin.label.font = font;
+                        //    }
+                        //    GUILayout.EndVertical();
+                        //}
+                        //GUILayout.EndHorizontal();
                     }
                 }
                 GUILayout.EndVertical();
@@ -152,7 +166,7 @@ namespace WrathPatches
 
                     GUILayout.Label($"UMM Harmony Version: {UmmHarmonyVersion}");
 
-                    GUILayout.FlexibleSpace();
+                    //GUILayout.FlexibleSpace();
                 }
                 GUILayout.EndVertical();
             }

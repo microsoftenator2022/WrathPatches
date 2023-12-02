@@ -1,52 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
 using HarmonyLib;
 
+using Kingmaker;
 using Kingmaker.UI;
+
+using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches
 {
     [WrathPatch("Silence 'no binding' warnings")]
     [HarmonyPatch]
-    internal static class KeyboardAccess_Bind_Patch
+    internal static class SilenceNoBindingLog
     {
-        [HarmonyPatch(typeof(KeyboardAccess), nameof(KeyboardAccess.Bind))]
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> Bind_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var iList = instructions.ToList();
-            var (index, i) = iList.Take(45).Indexed().First(i => i.item.opcode == OpCodes.Brfalse_S);
+        [HarmonyTargetMethods]
+        static IEnumerable<MethodBase> Methods() =>
+        [
+            AccessTools.Method(typeof(KeyboardAccess), nameof(KeyboardAccess.Bind)),
+            AccessTools.Method(typeof(KeyboardAccess), nameof(KeyboardAccess.DoUnbind))
+        ];
 
-            //Main.Logger.Log($"{index}: {iList[index]}");
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> Patch_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var match = instructions.FindInstructionsIndexed(new Func<CodeInstruction, bool>[]
+            {
+                ci => ci.opcode == OpCodes.Brfalse_S,
+                ci => ci.Calls(AccessTools.PropertyGetter(typeof(PFLog), nameof(PFLog.Default))),
+                ci => ci.opcode == OpCodes.Ldstr && ci.operand as string == "Bind: no binding named {0}"
+            });
+
+            if (match.Count() != 3)
+                throw new KeyNotFoundException("Unable to find patch location");
+
+            var (index, i) = match.First();
+
+            var iList = instructions.ToList();
 
             iList[index] = new CodeInstruction(OpCodes.Br, i.operand);
             iList.Insert(index, new CodeInstruction(OpCodes.Pop));
-
-            //Main.Logger.Log($"{index}: {iList[index]}");
-            //Main.Logger.Log($"{index}: {iList[index + 1]}");
-
-            return iList;
-        }
-
-        [HarmonyPatch(typeof(KeyboardAccess), nameof(KeyboardAccess.DoUnbind))]
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> Unbind_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var iList = instructions.ToList();
-            var (index, i) = iList.Take(45).Indexed().First(i => i.item.opcode == OpCodes.Brfalse_S);
-
-            //Main.Logger.Log($"{index}: {iList[index]}");
-
-            iList[index] = new CodeInstruction(OpCodes.Br, i.operand);
-            iList.Insert(index, new CodeInstruction(OpCodes.Pop));
-
-            //Main.Logger.Log($"{index}: {iList[index]}");
-            //Main.Logger.Log($"{index}: {iList[index + 1]}");
 
             return iList;
         }
