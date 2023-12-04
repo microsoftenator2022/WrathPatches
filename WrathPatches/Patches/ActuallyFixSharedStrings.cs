@@ -31,18 +31,26 @@ namespace WrathPatches
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> SharedStringConverter_ReadJson_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            Main.Logger.Log($"{nameof(SharedStringConverter_ReadJson_Transpiler)}");
+            //Main.Logger.Log($"{nameof(SharedStringConverter_ReadJson_Transpiler)}");
 
-            var ssCons = typeof(SharedStringAsset).GetConstructor(new Type[0]);
-            var createSs = CreateSharedStringInstance;
+            var ssCons = typeof(SharedStringAsset).GetConstructor([]);
+            
+            var createSs = CreateSharedStringInstance ?? throw new Exception($"Unable to find or create constructor");
+
+            var count = 0;
 
             foreach (var i in instructions)
             {
-                if (createSs is not null && i.Is(OpCodes.Newobj, ssCons))
+                if (i.Is(OpCodes.Newobj, ssCons))
                     yield return new CodeInstruction(OpCodes.Call, createSs);
 
                 else yield return i;
+
+                count++;
             }
+
+            if (count == 0)
+                throw new Exception("Could not find instructions to patch");
         }
     }
 }

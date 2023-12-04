@@ -53,20 +53,20 @@ namespace WrathPatches
             {
                 Func<CodeInstruction, bool>[] toMatch =
                 [
-                    ci => ci.opcode == OpCodes.Ldloc_S,  // V_6 - IEnumerator state machine object
+                    ci => ci.opcode == OpCodes.Ldloc_S,  // V_6 - closure object
                     ci => ci.opcode == OpCodes.Ldloca_S, // V_5 - ReferenceArrayProxy.Enumerator struct
                     ci => ci.opcode == OpCodes.Call,     // ReferenceArrayProxy.Enumerator.Current (getter) :: ReferenceArrayProxy.Enumerator -> BlueprintUnitFact
                     ci => ci.opcode == OpCodes.Stfld,    // store to state machine "local"                  :: (V_6 * BlueprintUnitFact) -> ()
                     ci => ci.opcode == OpCodes.Ldarg_0,  // this
                     ci => ci.opcode == OpCodes.Call,     // this.Data (getter)                              :: AddFacts -> AddFactsData
                     ci => ci.opcode == OpCodes.Ldfld,    // this.Data.AppliedFacts                          :: AddFactsData -> List<UnitFact>
-                    ci => ci.opcode == OpCodes.Ldloc_S,  // V_6 - IEnumerator state machine object
+                    ci => ci.opcode == OpCodes.Ldloc_S,  // V_6 - closure object
                     ci => ci.opcode == OpCodes.Ldftn,    // lambda body pointer?
                     ci => ci.opcode == OpCodes.Newobj,   // Func<UnitFact, bool> constructor                :: (object * nativeint) -> Func<UnitFact, bool>
                     ci => ci.Calls(HasItemMethod),       // Kingmaker.Utility.LinqExtensions.HasItem        :: (IEnumerable<UnitFact> * Func<UnitFact, bool>) -> bool
                     ci => ci.opcode == OpCodes.Brtrue_S, //                                                 :: bool -> ()
                     ci => ci.opcode == OpCodes.Ldloc_1,  // TempList (List<BlueprintUnitFact)
-                    ci => ci.opcode == OpCodes.Ldloc_S,  // V_6 - IEnumerator state machine object
+                    ci => ci.opcode == OpCodes.Ldloc_S,  // V_6 - closure object
                     ci => ci.opcode == OpCodes.Ldfld,    // load state machine local                        :: V_6 -> BlueprintUnitFact
                     ci => ci.opcode == OpCodes.Callvirt, // List.Add                                        :: (List<BlueprintUnitFact> * BlueprintUnitFact) -> ()
                     ci => ci.opcode == OpCodes.Ldloca_S, // V_5 - ReferenceArrayProxy.Enumerator struct
