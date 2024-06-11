@@ -14,63 +14,6 @@ namespace WrathPatches
 {
     static partial class Main
     {
-        //readonly record struct Settings(bool ReplaceHarmonyAssembly, string HarmonyMinimumVersion)
-        //{
-        //    public static readonly Settings Default = new(false, "2.2.0.0");
-
-        //    static string SettingsPath => Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "settings.json");
-
-        //    static Settings Load()
-        //    {
-        //        if (File.Exists(SettingsPath))
-        //        {
-        //            try
-        //            {
-        //                return JsonConvert.DeserializeObject<Settings>(File.ReadAllText(SettingsPath));
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                Main.Logger.LogException(ex);
-        //            }
-        //        }
-
-        //        return Default;
-        //    }
-
-        //    public void Save() => File.WriteAllText(SettingsPath, JsonConvert.SerializeObject(this));
-
-        //    static Settings? current = null;
-        //    public static Settings Current
-        //    {
-        //        get => current ??= Load();
-        //        set => current = value;
-        //    }
-
-        //    //static Settings DisablePatch(string patchName)
-        //    //{
-        //    //    if (Current.DisabledPatches.Contains(patchName))
-        //    //        return Current;
-
-        //    //    return Current = Current with { DisabledPatches = Current.DisabledPatches.Append(patchName).ToArray() };
-        //    //}
-
-        //    //public static Settings EnablePatch(string patchName)
-        //    //{
-        //    //    if (!Current.DisabledPatches.Contains(patchName))
-        //    //        return Current;
-
-        //    //    return Current = Current with { DisabledPatches = Current.DisabledPatches.Where(n => n != patchName).ToArray() };
-        //    //}
-
-        //    //public static Settings SetPatchEnabled(string name, bool value) =>
-        //    //    value ? EnablePatch(name) : DisablePatch(name);
-
-        //    //public bool PatchIsEnabled(string patchName) => !DisabledPatches.Contains(patchName);
-        //}
-
-        //static readonly Font emojiFont = Font.CreateDynamicFontFromOSFont("Segoe UI Emoji", 12);
-        //static readonly Font textFont = Font.CreateDynamicFontFromOSFont("Segoe UI", 12);
-
         static void OnGUI(UnityModManager.ModEntry _)
         {
             GUILayout.BeginHorizontal();
@@ -94,50 +37,6 @@ namespace WrathPatches
                             name = $"(Experimental) {name}";
 
                         GUILayout.Toggle(applied is true, name);
-
-                        //GUILayout.BeginHorizontal(GUILayout.Height(textFont.lineHeight));
-                        //{
-                        //    GUILayout.BeginVertical(GUILayout.Width(20));
-                        //    {
-                        //        GUILayout.Space((textFont.lineHeight - textFont.ascent) + (emojiFont.lineHeight - emojiFont.ascent));
-
-                        //        GUI.skin.label.font = emojiFont;
-                        //        var fc = GUI.skin.label.font.material.color;
-                                
-                        //        var c = '✅';
-                                
-                        //        if (applied is not { } x)
-                        //        {
-                        //            GUI.skin.label.font.material.color = Color.gray;
-                        //        }
-                        //        else if (x)
-                        //        {
-                        //            GUI.skin.label.font.material.color = Color.green;
-                        //        }
-                        //        else
-                        //        {
-                        //            GUI.skin.label.font.material.color = Color.red;
-                        //            c = '❎';
-                        //        }
-                                
-                        //        GUILayout.Label(c.ToString(), GUILayout.Width(20));
-
-                        //        GUI.skin.label.font.material.color = fc;
-                        //        GUI.skin.label.font = font;
-                        //    }
-                        //    GUILayout.EndVertical();
-
-                        //    GUILayout.BeginVertical();
-                        //    {
-                        //        GUI.skin.label.font = textFont;
-
-                        //        GUILayout.Label(name);
-
-                        //        GUI.skin.label.font = font;
-                        //    }
-                        //    GUILayout.EndVertical();
-                        //}
-                        //GUILayout.EndHorizontal();
                     }
                 }
                 GUILayout.EndVertical();
@@ -165,8 +64,6 @@ namespace WrathPatches
                     GUILayout.EndHorizontal();
 
                     GUILayout.Label($"UMM Harmony Version: {UmmHarmonyVersion}");
-
-                    //GUILayout.FlexibleSpace();
                 }
                 GUILayout.EndVertical();
             }
@@ -215,8 +112,6 @@ namespace WrathPatches
             ModEntry = modEntry;
 
             ModEntry.OnGUI = OnGUI;
-
-            //ModEntry.OnSaveGUI = _ => Settings.Current.Save();
 
             ModEntry.OnToggle = (_, value) => value;
 

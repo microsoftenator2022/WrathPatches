@@ -3,7 +3,7 @@
   <Import Project="..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -26,6 +26,7 @@
     <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.TextRenderingModule.dll" Private="False" />
     <Reference Include="UnityEngine.UI" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.UI.dll" Private="False" />
     <Reference Include="UnityEngine.UIModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.UIModule.dll" Private="False" />
+    <Reference Include="UnityEngine.UnityWebRequestModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.UnityWebRequestModule.dll" Private="False" />
     <Reference Include="Unity.RenderPipelines.Core.Runtime" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll" Private="False" />
     <Reference Include="UniRx" HintPath="$(WrathPath)\Wrath_Data\Managed\UniRx.dll" Private="False" />
     <Reference Include="UnityModManager" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityModManager\UnityModManager.dll" Private="False" />

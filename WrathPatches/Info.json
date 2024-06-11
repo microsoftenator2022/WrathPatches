@@ -1,13 +1,14 @@
 {
   "Id": "WrathPatches",
-  "Version": "1.5.0",
+  "Version": "1.6.0",
   "AssemblyName": "WrathPatches.dll",
   "EntryMethod": "WrathPatches.Main.Load",
 
   "DisplayName": "Wrath Patches",
   "Author": "microsoftenator",
 
-  "GameVersion": "2.2.0",
+  "GameVersion": "2.3.0",
+  "ManagerVersion":  "0.27.11",
 
   "HomePage": "https://github.com/microsoftenator2022/WrathPatches",
   "Repository": "https://raw.githubusercontent.com/microsoftenator2022/WrathPatches/master/Repository.json"
