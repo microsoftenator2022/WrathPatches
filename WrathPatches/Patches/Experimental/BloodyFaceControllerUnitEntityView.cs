@@ -33,7 +33,7 @@ namespace WrathPatches.Patches.Experimental
 
             var ifFalse = iList[index + 1];
 
-            iList.InsertRange(index + 2,
+            iList.InsertRange(index - 2,
             [
                 new CodeInstruction(OpCodes.Ldarg_0),
                 CodeInstruction.Call((StandardMaterialController x) => HasUnitEntityView(x)),
