@@ -12,7 +12,7 @@ using Kingmaker.Visual.MaterialEffects;
 
 using Owlcat.Runtime.Core;
 
-namespace WrathPatches.Patches.Experimental
+namespace WrathPatches.Patches
 {
     [WrathPatch("No BloodyFaceController for non-UnitEntityView")]
     [HarmonyPatch(typeof(StandardMaterialController), nameof(StandardMaterialController.Awake))]
@@ -41,25 +41,6 @@ namespace WrathPatches.Patches.Experimental
             ]);
 
             return iList;
-
-            //foreach (var i in instructions)
-            //{
-            //    yield return i;
-
-            //    if (i.Calls(AccessTools.Method(typeof(StandardMaterialController), nameof(StandardMaterialController.Init))))
-            //    {
-            //        var l = generator.DefineLabel();
-
-            //        var jumpTarget = new CodeInstruction(OpCodes.Nop);
-            //        jumpTarget.labels.Add(l);
-
-            //        yield return new CodeInstruction(OpCodes.Ldarg_0);
-            //        yield return CodeInstruction.Call((StandardMaterialController x) => HasUnitEntityView(x));
-            //        yield return new CodeInstruction(OpCodes.Brtrue_S, l);
-            //        yield return new CodeInstruction(OpCodes.Ret);
-            //        yield return jumpTarget;
-            //    }
-            //}
         }
     }
 }

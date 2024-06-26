@@ -11,6 +11,7 @@ using Kingmaker.Blueprints.JsonSystem;
 
 namespace WrathPatches.Experimental
 {
+#if DEBUG
     //[HarmonyPatchCategory("Experimental")]
     //[WrathPatch("Allow add existing in BlueprintsCache.Init")]
     //[HarmonyPatch(typeof(BlueprintsCache))]
@@ -32,4 +33,5 @@ namespace WrathPatches.Experimental
             return instructions;
         }
     }
+#endif
 }

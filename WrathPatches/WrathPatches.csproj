@@ -74,7 +74,7 @@
     <Copy SourceFiles="@(Files)" DestinationFolder="$(WrathPath)\Mods\$(SolutionName)" />
   </Target>
 
-  <Target Name="ZipRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+  <Target Name="ZipRelease" AfterTargets="Build">
     <ZipDirectory SourceDirectory="$(OutDir)" DestinationFile="$(SolutionDir)\bin\$(SolutionName)-$(Version).zip" Overwrite="true" />
   </Target>
 
