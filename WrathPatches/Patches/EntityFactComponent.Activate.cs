@@ -150,22 +150,37 @@ namespace WrathPatches
             }
         }
 
+        static readonly Dictionary<Type, Delegate> lambdaDict = [];
+
         static void ComponentRuntime_Delegate_OnActivate(object instance)
         {
             //Main.Logger.Log(nameof(ComponentRuntime_Delegate_OnActivate));
 
             var t = instance.GetType();
 
-            var delegateProperty = t?.GetProperty("Delegate", AccessTools.all);
-            var delegateType = delegateProperty?.PropertyType;
-            var delegateOnActivate = delegateType?.GetMethod("OnActivate", AccessTools.all);
+            // Cache may not improve performance much? These logs should not be frequent so it should not matter much
+#if DEBUG
+            if (!lambdaDict.TryGetValue(t, out var @delegate))
+            {
+#endif
+                var delegateProperty = t?.GetProperty("Delegate", AccessTools.all);
+                var delegateType = delegateProperty?.PropertyType;
+                var delegateOnActivate = delegateType?.GetMethod("OnActivate", AccessTools.all);
 
-            var objectExpr = Expression.Parameter(t, "instance");
-            var getDelegateExpr = Expression.PropertyOrField(objectExpr, "Delegate");
-            var callOnActivate = Expression.Call(getDelegateExpr, delegateOnActivate);
+                var objectExpr = Expression.Parameter(t, "instance");
+                var getDelegateExpr = Expression.PropertyOrField(objectExpr, "Delegate");
+                var callOnActivate = Expression.Call(getDelegateExpr, delegateOnActivate);
 
-            var lambda = Expression.Lambda(callOnActivate, objectExpr);
-            lambda.Compile().DynamicInvoke(instance);
+                var lambda = Expression.Lambda(callOnActivate, objectExpr);
+
+#if DEBUG
+                @delegate = lambda.Compile();
+            }
+#else
+            var @delegate = lambda.Compile();
+#endif
+
+            _ = @delegate.DynamicInvoke(instance);
         }
 
         [HarmonyPatch(typeof(EntityFactComponentDelegate.ComponentRuntime),

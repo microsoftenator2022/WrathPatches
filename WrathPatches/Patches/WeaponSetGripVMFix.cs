@@ -27,8 +27,9 @@ namespace WrathPatches.Patches
 
             if (interfaceMap.InterfaceMethods
                 .Zip(interfaceMap.TargetMethods)
-                .TryFind((pair) => pair.Item1.Name == nameof(IUnityChangedGripAutoModeHandler.HandleUnitChangedGripAutoMode),
-                out var pair))
+                .TryFind((pair) =>
+                    pair.Item1.Name == nameof(IUnityChangedGripAutoModeHandler.HandleUnitChangedGripAutoMode),
+                    out var pair))
             {
                 return pair.Item2;
             }
