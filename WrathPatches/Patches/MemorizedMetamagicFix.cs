@@ -59,7 +59,7 @@ internal class MemorizedMetamagicFix
                 yield return new(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(SpellSlot), nameof(SpellSlot.SpellShell)));
                 yield return new(OpCodes.Ldarg_1);
                 yield return CodeInstruction.Call((AbilityData a1, AbilityData a2) => MetaComparator(a1, a2));
-                yield return new(OpCodes.Brfalse_S, targetLabel);
+                yield return new(OpCodes.Brtrue_S, targetLabel);
             }
         }
     }
