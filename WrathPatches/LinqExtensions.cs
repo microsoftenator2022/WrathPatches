@@ -116,5 +116,19 @@ namespace WrathPatches
             //while (enumeratorA.MoveNext() && enumeratorB.MoveNext())
             //    yield return (enumeratorA.Current, enumeratorB.Current);
         }
+
+        public static IEnumerable<T> EmptyIfNull<T>(this T? item) where T : class
+        {
+            if (item == null)
+                yield break;
+
+            yield return item;
+        }
+
+        public static IEnumerable<T> SkipIfNull<T>(this IEnumerable<T?> source) where T : class =>
+            source.SelectMany(EmptyIfNull);
+
+        public static IEnumerable<T> NotNull<T>(this IEnumerable<T?> source) where T : class =>
+            source.SelectMany(x => x.EmptyIfNull());
     }
 }
