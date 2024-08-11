@@ -27,6 +27,7 @@ using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.FactLogic;
 using Kingmaker.UnitLogic.Mechanics.Components;
 using Kingmaker.UnitLogic.Mechanics.Properties;
+using Kingmaker.Utility;
 
 namespace WrathPatches.Patches;
 
@@ -42,7 +43,6 @@ public class OwnerBlueprintWarning
         typeof(CapitalCompanionLogic),
         typeof(EtudeBracketMusic),
         typeof(EtudeBracketSetCompanionPosition),
-        //typeof(EtudeBracketTrigger<TData>),
         typeof(ArmyUnitComponent),
         typeof(LeaderPercentAttributeBonus),
         typeof(MaxArmySquadsBonusLeaderComponent),
@@ -76,6 +76,15 @@ public class OwnerBlueprintWarning
         typeof(UnitPropertyComponent)
     ];
 
+#if DEBUG
+    public static IEnumerable<Type> GenericComponentTypes =
+    [
+        typeof(EtudeBracketTrigger<object>)
+    ];
+#endif
+
+    static readonly HashSet<(BlueprintGuid, string)> AlreadyWarned = [];
+
     [HarmonyPatch(typeof(BlueprintsCache), nameof(BlueprintsCache.Load))]
     [HarmonyPostfix]
     static void Postfix(SimpleBlueprint __result, BlueprintGuid guid)
@@ -87,7 +96,16 @@ public class OwnerBlueprintWarning
         {
             if (c.OwnerBlueprint != blueprint)
             {
-                if (ErrorComponentTypes.Any(t => t.IsAssignableFrom(c.GetType())))
+#if !DEBUG
+                if (AlreadyWarned.Contains((blueprint.AssetGuid, c.name)))
+                    continue;
+#endif
+
+                if (ErrorComponentTypes.Any(t => t.IsAssignableFrom(c.GetType()))
+#if DEBUG
+                    || GenericComponentTypes.Any(t => c.GetType().GetAllBaseTypes(true).Where(t => t.IsGenericType).Select(t => t.GetGenericTypeDefinition()).Contains(t))
+#endif
+                    )
                 {
                     Main.Logger.Error($"In blueprint {guid} \"{blueprint.name}\": " +
                         $"Non-matching OwnerBlueprint {c.OwnerBlueprint?.ToString() ?? "NULL"} on {c.GetType()} \"{c.name}\". " +
