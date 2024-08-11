@@ -1,6 +1,6 @@
 {
   "Id": "WrathPatches",
-  "Version": "1.9.1",
+  "Version": "1.9.2",
   "AssemblyName": "WrathPatches.dll",
   "EntryMethod": "WrathPatches.Main.Load",
 
