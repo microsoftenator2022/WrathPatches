@@ -7,11 +7,6 @@ using System.Reflection.Emit;
 
 using HarmonyLib;
 
-using Kingmaker;
-using Kingmaker.Cheats;
-using Kingmaker.Designers.Mechanics.Facts;
-using Kingmaker.RuleSystem.Rules.Damage;
-
 using UnityEngine;
 
 using UnityModManagerNet;

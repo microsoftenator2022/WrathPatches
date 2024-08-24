@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionPrefix>1.10.0</VersionPrefix>
+    <VersionPrefix>1.11.0</VersionPrefix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <VersionSuffix>debug</VersionSuffix>
