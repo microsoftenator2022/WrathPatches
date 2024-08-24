@@ -11,6 +11,16 @@ namespace WrathPatches.TranspilerUtil
 {
     public static class TranspilerUtil
     {
+        public static IEnumerable<Type> GetNestedTypesAndSelf(this Type t)
+        {
+            yield return t;
+
+            foreach (var n in t.GetNestedTypes().SelectMany(n => n.GetNestedTypesAndSelf()))
+            {
+                yield return n;
+            }
+        }
+
         public static IEnumerable<(int index, CodeInstruction instruction)> FindInstructionsIndexed(
             this IEnumerable<CodeInstruction> instructions,
             IEnumerable<Func<CodeInstruction, bool>> matchFuncs)
