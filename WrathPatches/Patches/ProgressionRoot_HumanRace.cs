@@ -16,7 +16,7 @@ namespace WrathPatches.Patches;
 
 [WrathPatch("Make ProgressionRoot.HumanRace not break if added new races")]
 [HarmonyPatch(typeof(ProgressionRoot), nameof(ProgressionRoot.HumanRace), MethodType.Getter)]
-internal static class BlueprintProgression_HumanRace
+internal static class ProgressionRoot_HumanRace
 {
     static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> _)
     {
