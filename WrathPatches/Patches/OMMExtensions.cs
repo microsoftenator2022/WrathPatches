@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,9 +20,9 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches.Patches;
 
-[HarmonyPatchCategory("Experimental")]
-[WrathPatch("OwlcatModificationManager Assemblies load patch")]
-[HarmonyPatch]
+//[HarmonyPatchCategory("Experimental")]
+//[WrathPatch("OwlcatModificationManager Assemblies load patch")]
+//[HarmonyPatch]
 internal static class LoadAssembliesFromList
 {
     [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.GetFilesFromDirectory))]
@@ -68,64 +69,92 @@ internal static class LoadAssembliesFromList
 [HarmonyPatch(typeof(OwlcatModificationsManager))]
 internal static class UMMDependency
 {
-
-    static IEnumerable<OwlcatModificationManifest> UMMMods
+    static IEnumerable<OwlcatModificationManifest> UMMModManifests
     {
         get
         {
             foreach (var modInfo in UnityModManager.modEntries.Select(me => me.Info))
             {
-                yield return new()
+                var manifest = new OwlcatModificationManifest()
                 {
-                    UniqueName = modInfo.Id,
-                    DisplayName = modInfo.DisplayName,
-                    Version = modInfo.Version
+                    UniqueName = modInfo.Id ?? "",
+                    DisplayName = modInfo.DisplayName ?? "",
+                    Version = modInfo.Version ?? "",
+                    Description = "",
+                    Author = modInfo.Author ?? "",
+                    Repository = modInfo.Repository ?? "",
+                    HomePage = modInfo.HomePage ?? "",
+                    Dependencies = []
                 };
+
+                yield return manifest;
             }
         }
     }
 
-    static OwlcatModificationManifest? TryGetUMMMod(OwlcatModificationManifest.Dependency dependency) =>
-        UMMMods.FirstOrDefault(m => m.UniqueName == dependency.Name);
+    static IEnumerable<OwlcatModification> FakeOwlmods
+    {
+        get
+        {
+            foreach (var manifest in UMMModManifests)
+            {
+                var fakeMod = FormatterServices.GetUninitializedObject(typeof(OwlcatModification));
 
-    static FieldInfo DependencyLocalValue =>
-        typeof(OwlcatModificationsManager).GetNestedTypes(AccessTools.all)
-            .Select(t => t.GetField("dependency", AccessTools.all))
-            .SkipIfNull()
-            .Single(fi => fi.FieldType == typeof(OwlcatModificationManifest.Dependency));
+                typeof(OwlcatModification).GetField(nameof(OwlcatModification.Manifest)).SetValue(fakeMod, manifest);
+
+                yield return (OwlcatModification)fakeMod;
+            }
+        }
+    }
 
     [HarmonyPatch(nameof(OwlcatModificationsManager.CheckDependencies))]
-    [HarmonyTranspiler]
-    static IEnumerable<CodeInstruction> CheckDependencies_Transpiler(IEnumerable<CodeInstruction> instructions)
+    [HarmonyPrefix]
+    static void InjectUMMMods(ref List<OwlcatModification> appliedModifications)
     {
-        var match = instructions.FindInstructionsIndexed(
-        [
-            ci => ci.opcode == OpCodes.Stloc_S && ci.operand is LocalBuilder { LocalIndex: 5 },
-            ci => ci.opcode == OpCodes.Ldloc_S && ci.operand is LocalBuilder { LocalIndex: 5 },
-            ci => ci.opcode == OpCodes.Brtrue_S
-        ]).ToArray();
-
-        if (match.Length != 3)
-            throw new Exception($"Could not find instructions to patch");
-
-        var dependencyFound = match[2].instruction.operand;
-
-        var iList = instructions.ToList();
-
-        var getUMMDependency = new CodeInstruction[]
-        {
-            new(OpCodes.Ldloc_S, 4),
-            new(OpCodes.Ldfld, DependencyLocalValue),
-            CodeInstruction.Call((OwlcatModificationManifest.Dependency dependency) => TryGetUMMMod(dependency)),
-            new(OpCodes.Dup),
-            new(OpCodes.Stloc_S, 5),
-            new(OpCodes.Brtrue_S, dependencyFound)
-        };
-
-        iList.InsertRange(match[2].index + 1, getUMMDependency);
-
-        return iList;
+        appliedModifications = appliedModifications.Concat(FakeOwlmods).ToList();
     }
+
+    //static OwlcatModificationManifest? TryGetUMMMod(OwlcatModificationManifest.Dependency dependency) =>
+    //    UMMModManifests.FirstOrDefault(m => m.UniqueName == dependency.Name);
+
+    //static FieldInfo DependencyLocalValue =>
+    //    typeof(OwlcatModificationsManager).GetNestedTypes(AccessTools.all)
+    //        .Select(t => t.GetField("dependency", AccessTools.all))
+    //        .SkipIfNull()
+    //        .Single(fi => fi.FieldType == typeof(OwlcatModificationManifest.Dependency));
+
+    //[HarmonyPatch(nameof(OwlcatModificationsManager.CheckDependencies))]
+    //[HarmonyTranspiler]
+    //static IEnumerable<CodeInstruction> CheckDependencies_Transpiler(IEnumerable<CodeInstruction> instructions)
+    //{
+    //    var match = instructions.FindInstructionsIndexed(
+    //    [
+    //        ci => ci.opcode == OpCodes.Stloc_S && ci.operand is LocalBuilder { LocalIndex: 5 },
+    //        ci => ci.opcode == OpCodes.Ldloc_S && ci.operand is LocalBuilder { LocalIndex: 5 },
+    //        ci => ci.opcode == OpCodes.Brtrue_S
+    //    ]).ToArray();
+
+    //    if (match.Length != 3)
+    //        throw new Exception($"Could not find instructions to patch");
+
+    //    var dependencyFound = match[2].instruction.operand;
+
+    //    var iList = instructions.ToList();
+
+    //    var getUMMDependency = new CodeInstruction[]
+    //    {
+    //        new(OpCodes.Ldloc_S, 4),
+    //        new(OpCodes.Ldfld, DependencyLocalValue),
+    //        CodeInstruction.Call((OwlcatModificationManifest.Dependency dependency) => TryGetUMMMod(dependency)),
+    //        new(OpCodes.Dup),
+    //        new(OpCodes.Stloc_S, 5),
+    //        new(OpCodes.Brtrue_S, dependencyFound)
+    //    };
+
+    //    iList.InsertRange(match[2].index + 1, getUMMDependency);
+
+    //    return iList;
+    //}
 }
 
 [WrathPatch("OwlcatModificationManager: Compare OMM mod versions like UMM")]
@@ -133,8 +162,10 @@ internal static class UMMDependency
 static class OMMVersionCheck
 {
     // Return true if the version is too low
-    static bool VersionCheck(string thisVersionString, string otherVersionString)
+    static bool VersionCheck(string? thisVersionString, string? otherVersionString)
     {
+        if (thisVersionString is null || otherVersionString is null) return true;
+
         var thisVersion = UnityModManager.ParseVersion(thisVersionString);
         var otherVersion = UnityModManager.ParseVersion(otherVersionString);
 
@@ -157,10 +188,12 @@ static class OMMVersionCheck
                 patched = true;
 #endif
 
-                yield return CodeInstruction.Call((string a, string b) => VersionCheck(a, b)).WithLabels(i.labels);
-                continue;
-            }
+                //yield return CodeInstruction.Call((string a, string b) => VersionCheck(a, b)).WithLabels(i.labels);
+                //continue;
 
+                i.operand = AccessTools.Method(typeof(OMMVersionCheck), nameof(VersionCheck));
+            }
+            
             yield return i;
         }
 
