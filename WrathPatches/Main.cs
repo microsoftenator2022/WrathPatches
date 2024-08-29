@@ -7,6 +7,8 @@ using System.Reflection.Emit;
 
 using HarmonyLib;
 
+using Kingmaker.Blueprints.JsonSystem;
+
 using UnityEngine;
 
 using UnityModManagerNet;
