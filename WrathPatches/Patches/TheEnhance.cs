@@ -161,14 +161,18 @@ public static class TheEnhance
     [HarmonyPostfix]
     static void OMM_Constructor_Postfix(OwlcatModificationsManager __instance)
     {
+        if (__instance.m_Settings is null)
+            return;
+
         var enabledMods = __instance.m_Settings.EnabledModifications.Where(m => m != "PatchEnhancer").ToArray();
 
         if (enabledMods.Length < __instance.m_Settings.EnabledModifications.Length)
         {
             PFLog.Mods.Warning("Disabling old PatchEnhancer");
-        
+
             AccessTools.Field(typeof(OwlcatModificationsManager.SettingsData), nameof(OwlcatModificationsManager.SettingsData.EnabledModifications))
                 .SetValue(__instance.m_Settings, enabledMods);
         }
     }
+
 }
