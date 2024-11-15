@@ -15,28 +15,28 @@ using WrathPatches;
 
 namespace WrathPatches.Patches
 {
-    [WrathPatch("Fix Owlcat's mod material shaders 'fix'")]
-    [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.PatchMaterialShaders))]
-    static class OwlcatModShadersFixFix
-    {
-        [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> _)
-        {
-            yield return new(OpCodes.Ret);
-        }
+    //[WrathPatch("Fix Owlcat's mod material shaders 'fix'")]
+    //[HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.PatchMaterialShaders))]
+    //static class OwlcatModShadersFixFix
+    //{
+    //    [HarmonyTranspiler]
+    //    static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> _)
+    //    {
+    //        yield return new(OpCodes.Ret);
+    //    }
 
-        [HarmonyPostfix]
-        static void Postfix(IEnumerable<Material> materials)
-        {
-            foreach (var material in materials)
-            {
-                if (material == null || material.shader == null)
-                    continue;
-                var shader = Shader.Find(material.shader.name);
+    //    [HarmonyPostfix]
+    //    static void Postfix(IEnumerable<Material> materials)
+    //    {
+    //        foreach (var material in materials)
+    //        {
+    //            if (material == null || material.shader == null)
+    //                continue;
+    //            var shader = Shader.Find(material.shader.name);
 
-                if (shader != null)
-                    material.shader = shader;
-            }
-        }
-    }
+    //            if (shader != null)
+    //                material.shader = shader;
+    //        }
+    //    }
+    //}
 }

@@ -25,8 +25,8 @@ namespace WrathPatches.Patches;
 //[HarmonyPatch]
 internal static class LoadAssembliesFromList
 {
-    [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.GetFilesFromDirectory))]
-    [HarmonyPostfix]
+    //[HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.GetFilesFromDirectory))]
+    //[HarmonyPostfix]
     static IEnumerable<string> GetFilesFromDirectory_Postfix(IEnumerable<string> result, string directory)
     {
         var dirName = new DirectoryInfo(directory).Name;

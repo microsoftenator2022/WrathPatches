@@ -15,11 +15,11 @@ namespace WrathPatches.Experimental
     //[HarmonyPatchCategory("Experimental")]
     //[WrathPatch("Allow add existing in BlueprintsCache.Init")]
     //[HarmonyPatch(typeof(BlueprintsCache))]
-    internal static class BlueprintsCacheInitAddBlueprint
+    static class BlueprintsCacheInitAddBlueprint
     {
-        [HarmonyPatch(nameof(BlueprintsCache.Init))]
-        [HarmonyTranspiler]
-        internal static IEnumerable<CodeInstruction> Init_Transpiler(IEnumerable<CodeInstruction> instructions)
+        //[HarmonyPatch(nameof(BlueprintsCache.Init))]
+        //[HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> Init_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             Main.Logger.Log($"{nameof(BlueprintsCacheInitAddBlueprint)}.{nameof(Init_Transpiler)}");
 

@@ -43,11 +43,6 @@ namespace WrathPatches
 
             var iMatch = instructions.FindInstructionsIndexed(match);
 
-            //foreach ((var index, var instruction) in iMatch)
-            //{
-            //    Main.Logger.Log($"{index}: {instruction}");
-            //}
-
             if (!iMatch.Any())
             {
                 Main.Logger.Log("No match found");

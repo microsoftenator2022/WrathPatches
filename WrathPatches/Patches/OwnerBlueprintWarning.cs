@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ using Kingmaker.Craft;
 using Kingmaker.Designers.EventConditionActionSystem.Events;
 using Kingmaker.Designers.Mechanics.Buffs;
 using Kingmaker.Dungeon.FactLogic;
+using Kingmaker.EntitySystem.Persistence.JsonUtility;
 using Kingmaker.Kingdom.Settlements.BuildingComponents;
 using Kingmaker.Tutorial;
 using Kingmaker.UnitLogic.Abilities.Components;
@@ -28,6 +30,8 @@ using Kingmaker.UnitLogic.FactLogic;
 using Kingmaker.UnitLogic.Mechanics.Components;
 using Kingmaker.UnitLogic.Mechanics.Properties;
 using Kingmaker.Utility;
+
+using Newtonsoft.Json;
 
 namespace WrathPatches.Patches;
 
@@ -91,8 +95,11 @@ public class OwnerBlueprintWarning
     {
         if (__result is not BlueprintScriptableObject blueprint)
             return;
-
+#if DEBUG
+        foreach (var (i, c) in blueprint.ComponentsArray.Indexed())
+#else
         foreach (var c in blueprint.ComponentsArray)
+#endif
         {
             if (c.OwnerBlueprint != blueprint)
             {
@@ -110,6 +117,29 @@ public class OwnerBlueprintWarning
                     Main.Logger.Error($"In blueprint {guid} \"{blueprint.name}\": " +
                         $"Non-matching OwnerBlueprint {c.OwnerBlueprint?.ToString() ?? "NULL"} on {c.GetType()} \"{c.name}\". " +
                         $"THIS COMPONENT MAY NOT WORK AS EXPECTED!");
+#if DEBUG
+                    Main.Logger.Log("Trying fix");
+                    
+                    Json.BlueprintBeingRead = new BlueprintJsonWrapper(blueprint);
+
+                    var ms = new MemoryStream();
+
+                    var writer = new StreamWriter(ms);
+                    var jsonWriter = new JsonTextWriter(writer);
+                    Json.Serializer.Serialize(jsonWriter, c);
+
+                    jsonWriter.Flush();
+
+                    ms.Position = 0;
+
+                    var reader = new StreamReader(ms);
+                    var jsonReader = new JsonTextReader(reader);
+                    blueprint.ComponentsArray[i] = (BlueprintComponent)Json.Serializer.Deserialize(jsonReader, c.GetType());
+
+                    blueprint.ComponentsArray[i].OwnerBlueprint = blueprint;
+
+                    Json.BlueprintBeingRead = null;
+#endif
                 }
 #if DEBUG
                 else

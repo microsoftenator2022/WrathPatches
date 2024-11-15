@@ -30,6 +30,7 @@
     <Reference Include="Unity.RenderPipelines.Core.Runtime" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll" Private="False" />
     <Reference Include="UniRx" HintPath="$(WrathPath)\Wrath_Data\Managed\UniRx.dll" Private="False" />
     <Reference Include="UnityModManager" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityModManager\UnityModManager.dll" Private="False" />
+    <!--<Reference Include="$(WrathPath)\Wrath_Data\Managed\System.IO.Compression.dll" Private="False" />-->
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +45,14 @@
       <PrivateAssets>none</PrivateAssets>
       <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShaderWrapper\ShaderWrapper.csproj" />
   </ItemGroup>
 
   <ItemGroup>
