@@ -21,19 +21,42 @@ internal class SpellSlotComparisonFixes
 {
     static int MetaComparator(AbilityData a1, AbilityData a2)
     {
-        //Main.Logger.Log($"Compare {a1.Name} to {a2.Name}");
-        //Main.Logger.Log($"{a1} metamagic mask: {a1.MetamagicData?.MetamagicMask}");
-        //Main.Logger.Log($"{a2} metamagic mask: {a2.MetamagicData?.MetamagicMask}");
+        #if DEBUG
+        Main.Logger.Log($"Compare {a1.Name} to {a2.Name}");
+        Main.Logger.Log($"{a1} metamagic mask: {a1.MetamagicData?.MetamagicMask}");
+        Main.Logger.Log($"{a2} metamagic mask: {a2.MetamagicData?.MetamagicMask}");
+        #endif
+        
+        var result = (a2.MetamagicData != null ? (int)a2.MetamagicData.MetamagicMask : 0) - (a1.MetamagicData != null ? (int)a1.MetamagicData.MetamagicMask : 0);
+        
+        #if DEBUG
+        Main.Logger.Log($"Result: {result}");
+        #endif
 
-        return (a2.MetamagicData != null ? (int)a2.MetamagicData.MetamagicMask : 0) - (a1.MetamagicData != null ? (int)a1.MetamagicData.MetamagicMask : 0);
+        return result;
     }
 
-    static int CompareSpellbooks(Spellbook sb1, Spellbook sb2) =>
-        sb1.Owner.Spellbooks.IndexOf(sb1) - sb2.Owner.Spellbooks.IndexOf(sb2);
+    static int CompareSpellbooks(Spellbook sb1, Spellbook sb2)
+    {
+        #if DEBUG
+        Main.Logger.Log($"Compare spellbooks: sb1 = {sb1} sb2 = {sb2}");
+        #endif
+
+        var sb2Index = sb2.Owner.Spellbooks.IndexOf(sb2);
+        var sb1Index = sb1.Owner.Spellbooks.IndexOf(sb1);
+
+        var result = sb2Index - sb1Index;
+
+        #if DEBUG
+        Main.Logger.Log($"Result: {sb2Index} - {sb1Index} = {result}");
+        #endif
+
+        return result;
+    }
 
     static int Compare(AbilityData a1, AbilityData a2)
     {
-        if (a1.Spellbook is { } sb1 && a1.Spellbook is { } sb2)
+        if (a1.Spellbook is { } sb1 && a2.Spellbook is { } sb2)
         {
             var compareSpellbooks = CompareSpellbooks(sb1, sb2);
 
@@ -51,15 +74,29 @@ internal class SpellSlotComparisonFixes
 
         //return MetaComparator(s1.Spell, s2.Spell);
 
-        return Compare(s1.Spell, s2.Spell);
+        var compare = Compare(s1.Spell, s2.Spell);
+
+        #if DEBUG
+        Main.Logger.Log($"{nameof(Comparator_Postfix)}: {compare}");
+        #endif
+
+        return compare;
     }
 
     [HarmonyPatch(typeof(ActionBarSpellbookHelper), nameof(ActionBarSpellbookHelper.IsEquals), [typeof(SpellSlot), typeof(SpellSlot)])]
     [HarmonyPostfix]
-    static bool ActionBarSpellbookHelper_IsEquals_Postfix(bool result, SpellSlot s1, SpellSlot s2) =>
-        result &&
+    static bool ActionBarSpellbookHelper_IsEquals_Postfix(bool result, SpellSlot s1, SpellSlot s2)
+    {
+        var compare = Compare(s1.Spell, s2.Spell);
+
+        #if DEBUG
+        Main.Logger.Log($"{nameof(ActionBarSpellbookHelper_IsEquals_Postfix)}: {compare}");
+        #endif
+
+        return result && compare == 0;
         //MetaComparator(s1.Spell, s2.Spell) == 0;
-        Compare(s1.SpellShell, s2.SpellShell) != 0;
+        ;
+    }
 
     [HarmonyPatch(typeof(Spellbook), nameof(Spellbook.GetAvailableForCastSpellCount))]
     [HarmonyTranspiler]
