@@ -11,12 +11,13 @@ using Kingmaker.UI.MVVM._VM.ActionBar;
 using Kingmaker.UI.UnitSettings;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
+using Kingmaker.Utility;
 
 namespace WrathPatches.Patches;
 
-[WrathPatch("Fix Memorized Caster Metamagic")]
+[WrathPatch("Fix Spell Slot comparison.")]
 [HarmonyPatch]
-internal class MemorizedMetamagicFix
+internal class SpellSlotComparisonFixes
 {
     static int MetaComparator(AbilityData a1, AbilityData a2)
     {
@@ -27,19 +28,38 @@ internal class MemorizedMetamagicFix
         return (a2.MetamagicData != null ? (int)a2.MetamagicData.MetamagicMask : 0) - (a1.MetamagicData != null ? (int)a1.MetamagicData.MetamagicMask : 0);
     }
 
+    static int CompareSpellbooks(Spellbook sb1, Spellbook sb2) =>
+        sb1.Owner.Spellbooks.IndexOf(sb1) - sb2.Owner.Spellbooks.IndexOf(sb2);
+
+    static int Compare(AbilityData a1, AbilityData a2)
+    {
+        if (a1.Spellbook is { } sb1 && a1.Spellbook is { } sb2)
+        {
+            var compareSpellbooks = CompareSpellbooks(sb1, sb2);
+
+            if (compareSpellbooks != 0) return compareSpellbooks;
+        }
+
+        return MetaComparator(a1, a2);
+    }
+
     [HarmonyPatch(typeof(ActionBarSpellbookHelper), nameof(ActionBarSpellbookHelper.Comparator))]
     [HarmonyPostfix]
     private static int Comparator_Postfix(int result, MechanicActionBarSlotSpell s1, MechanicActionBarSlotSpell s2)
     {
         if (result != 0) return result;
 
-        return MetaComparator(s1.Spell, s2.Spell);
+        //return MetaComparator(s1.Spell, s2.Spell);
+
+        return Compare(s1.Spell, s2.Spell);
     }
 
     [HarmonyPatch(typeof(ActionBarSpellbookHelper), nameof(ActionBarSpellbookHelper.IsEquals), [typeof(SpellSlot), typeof(SpellSlot)])]
     [HarmonyPostfix]
     static bool ActionBarSpellbookHelper_IsEquals_Postfix(bool result, SpellSlot s1, SpellSlot s2) =>
-        result && MetaComparator(s1.Spell, s2.Spell) == 0;
+        result &&
+        //MetaComparator(s1.Spell, s2.Spell) == 0;
+        Compare(s1.SpellShell, s2.SpellShell) != 0;
 
     [HarmonyPatch(typeof(Spellbook), nameof(Spellbook.GetAvailableForCastSpellCount))]
     [HarmonyTranspiler]
@@ -58,7 +78,7 @@ internal class MemorizedMetamagicFix
                 yield return new(OpCodes.Ldloc_S, 4);
                 yield return new(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(SpellSlot), nameof(SpellSlot.SpellShell)));
                 yield return new(OpCodes.Ldarg_1);
-                yield return CodeInstruction.Call((AbilityData a1, AbilityData a2) => MetaComparator(a1, a2));
+                yield return CodeInstruction.Call((AbilityData a1, AbilityData a2) => Compare(a1, a2));
                 yield return new(OpCodes.Brtrue_S, targetLabel);
             }
         }
