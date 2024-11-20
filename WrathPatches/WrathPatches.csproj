@@ -74,7 +74,18 @@
   </Target>
 
   <Target Name="InfoJson" AfterTargets="Deploy">
-    <InfoJson OutputPath="$(OutDir)" Id="$(MSBuildProjectName)" Version="$(VersionPrefix)" DisplayName="Alternate Racial Traits" Author="microsoftenator" GameVersion="2.5.0" ManagerVersion="0.27.11" HomePage="https://github.com/microsoftenator2022/WrathPatches" Repository="https://github.com/microsoftenator2022/WrathPatches/blob/master/Repository.json" />
+    <InfoJson 
+      OutputPath="$(OutDir)"
+      Id="$(MSBuildProjectName)"
+      Version="$(VersionPrefix)"
+      DisplayName="WrathPatches"
+      Author="microsoftenator"
+      GameVersion="2.5.0"
+      ManagerVersion="0.27.11"
+      HomePage="https://github.com/microsoftenator2022/WrathPatches"
+      Repository="https://github.com/microsoftenator2022/WrathPatches/blob/master/Repository.json"
+      AssemblyName="WrathPatches.dll"
+      EntryMethod="WrathPatches.Main.Load" />
   </Target>
   
   <Target Name="Deploy" AfterTargets="Build">
