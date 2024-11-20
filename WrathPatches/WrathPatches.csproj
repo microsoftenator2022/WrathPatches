@@ -49,6 +49,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MicroWrath.Generator.Tasks" Version="0.10.0-prerelease-20240811-1424" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,15 +67,16 @@
     <None Update="IgnoreHarmonyVersion.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Update="Info.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <Target Name="Publicize" AfterTargets="BeforeBuild;Clean" Inputs="@(Publicize)" Outputs="$(SolutionDir)lib\%(Publicize.Filename)_public.dll">
     <PublicizeTask InputAssemblies="@(Publicize)" OutputDir="$(SolutionDir)lib\" />
   </Target>
 
+  <Target Name="InfoJson" AfterTargets="Deploy">
+    <InfoJson OutputPath="$(OutDir)" Id="$(MSBuildProjectName)" Version="$(VersionPrefix)" DisplayName="Alternate Racial Traits" Author="microsoftenator" GameVersion="2.5.0" ManagerVersion="0.27.11" HomePage="https://github.com/microsoftenator2022/WrathPatches" Repository="https://github.com/microsoftenator2022/WrathPatches/blob/master/Repository.json" />
+  </Target>
+  
   <Target Name="Deploy" AfterTargets="Build">
     <ItemGroup>
       <Files Include="$(SolutionDir)\bin\$(Configuration)\$(TargetFramework)\$(SolutionName)\**\*.*" />
