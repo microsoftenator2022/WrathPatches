@@ -15,6 +15,7 @@ using Kingmaker.Utility;
 
 namespace WrathPatches.Patches
 {
+    #if false
     //[HarmonyPatchCategory("Experimental")]
     [WrathPatch("Add null check to WeaponSetGripVM.HandleUnitChangedGripAutoMode")]
     [HarmonyPatch]
@@ -65,4 +66,5 @@ namespace WrathPatches.Patches
             return iList;
         }
     }
+    #endif
 }
