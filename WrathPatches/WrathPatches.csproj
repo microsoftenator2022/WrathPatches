@@ -83,7 +83,7 @@
       GameVersion="2.5.0"
       ManagerVersion="0.27.11"
       HomePage="https://github.com/microsoftenator2022/WrathPatches"
-      Repository="https://github.com/microsoftenator2022/WrathPatches/blob/master/Repository.json"
+      Repository="https://raw.githubusercontent.com/microsoftenator2022/WrathPatches/refs/heads/master/Repository.json"
       AssemblyName="WrathPatches.dll"
       EntryMethod="WrathPatches.Main.Load" />
   </Target>
