@@ -56,6 +56,8 @@ internal class SpellSlotComparisonFixes
 
     static int Compare(AbilityData a1, AbilityData a2)
     {
+        Main.Logger.Log($"{nameof(SpellSlotComparisonFixes)}.{nameof(Compare)}");
+
         if (a1.Spellbook is { } sb1 && a2.Spellbook is { } sb2)
         {
             var compareSpellbooks = CompareSpellbooks(sb1, sb2);
@@ -72,8 +74,6 @@ internal class SpellSlotComparisonFixes
     {
         if (result != 0) return result;
 
-        //return MetaComparator(s1.Spell, s2.Spell);
-
         var compare = Compare(s1.Spell, s2.Spell);
 
         #if DEBUG
@@ -85,23 +85,36 @@ internal class SpellSlotComparisonFixes
 
     [HarmonyPatch(typeof(ActionBarSpellbookHelper), nameof(ActionBarSpellbookHelper.IsEquals), [typeof(SpellSlot), typeof(SpellSlot)])]
     [HarmonyPostfix]
-    static bool ActionBarSpellbookHelper_IsEquals_Postfix(bool result, SpellSlot s1, SpellSlot s2)
+    static bool ActionBarSpellbookHelper_IsEquals_SpellSlot_Postfix(bool result, SpellSlot s1, SpellSlot s2)
     {
         var compare = Compare(s1.Spell, s2.Spell);
 
         #if DEBUG
-        Main.Logger.Log($"{nameof(ActionBarSpellbookHelper_IsEquals_Postfix)}: {compare}");
+        Main.Logger.Log($"{nameof(ActionBarSpellbookHelper_IsEquals_SpellSlot_Postfix)}: {compare}");
         #endif
 
         return result && compare == 0;
-        //MetaComparator(s1.Spell, s2.Spell) == 0;
-        ;
+    }
+
+    [HarmonyPatch(typeof(ActionBarSpellbookHelper), nameof(ActionBarSpellbookHelper.IsEquals), [typeof(AbilityData), typeof(AbilityData)])]
+    [HarmonyPostfix]
+    static bool ActionBarSpellbookHelper_IsEquals_AbilityData_Postfix(bool result, AbilityData a1, AbilityData a2)
+    {
+        var compare = Compare(a1, a2);
+
+#if DEBUG
+        Main.Logger.Log($"{nameof(ActionBarSpellbookHelper_IsEquals_AbilityData_Postfix)}: {compare}");
+#endif
+
+        return result && compare == 0;
     }
 
     [HarmonyPatch(typeof(Spellbook), nameof(Spellbook.GetAvailableForCastSpellCount))]
     [HarmonyTranspiler]
     static IEnumerable<CodeInstruction> ActionBarSpellbookHelper_TryAddSpell_Transpiler(IEnumerable<CodeInstruction> instructions)
     {
+        var applied = false;
+
         foreach (var i in instructions)
         {
             yield return i;
@@ -117,7 +130,12 @@ internal class SpellSlotComparisonFixes
                 yield return new(OpCodes.Ldarg_1);
                 yield return CodeInstruction.Call((AbilityData a1, AbilityData a2) => Compare(a1, a2));
                 yield return new(OpCodes.Brtrue_S, targetLabel);
+
+                applied = true;
             }
         }
+
+        if (!applied)
+            throw new Exception("Failed to find target instruction");
     }
 }
