@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Kingmaker;
 using System.Reflection;
 using System.IO;
+using System.Reflection.Emit;
 
 namespace ShaderWrapper
 {
@@ -62,30 +63,73 @@ namespace ShaderWrapper
         public Shader[] shaders;
     }
 
-    [HarmonyPatch(typeof(OwlcatModification), "PatchMaterialShaders")]
+    //[HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.PatchMaterialShaders))]
+    [HarmonyPatch]
     static public class PatchForShaderFind
     {
+        static bool Applied = false;
+
+
+        [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.PatchMaterialShaders))]
         static bool Prefix(IEnumerable<Material> materials)
         {
-            PFLog.Mods.Log("PatchForShaderFind enter");
-           foreach(var material in materials)
-           {
-               string shaderName = material?.shader?.name;
-                PFLog.Mods.Log($"PatchForShaderFind material is {material?.name ?? "NULL"}, shader is {shaderName ?? "Null"}");
+            PFLog.Mods.Warning("This should not be called.");
+
+            PatchMaterialShaders(materials, null!);
+            return false;
+        }
+
+        [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.LoadBundle))]
+        [HarmonyTranspiler]
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            if (Applied)
+                PFLog.Mods.Warning("Reapplying transpiler");
+
+            foreach (var i in instructions)
+            {
+                if (i.Calls(AccessTools.Method(typeof(OwlcatModification), nameof(OwlcatModification.PatchMaterialShaders))))
+                {
+                    yield return new(OpCodes.Ldarg_0);
+                    //i.operand = AccessTools.Method(typeof(PatchForShaderFind), nameof(PatchForShaderFind.PatchMaterialShaders));
+                    yield return CodeInstruction.Call((IEnumerable<Material> materials, OwlcatModification mod) => PatchMaterialShaders(materials, mod));
+
+                    Applied = true;
+                }
+                else
+                    yield return i;
+            }
+
+            if (!Applied)
+                throw new Exception("Failed to find target instruction");
+        }
+
+        //internal static bool Prefix(IEnumerable<Material> materials)
+        internal static void PatchMaterialShaders(IEnumerable<Material> materials, OwlcatModification mod)
+        {
+            var logger =
+                mod.Logger ??
+                PFLog.Mods;
+
+            logger.Log("PatchForShaderFind enter");
+            foreach(var material in materials)
+            {
+                string shaderName = material?.shader?.name;
+                logger.Log($"PatchForShaderFind material is {material?.name ?? "NULL"}, shader is {shaderName ?? "Null"}");
 
                 if (shaderName == null)
                 {
-                    PFLog.Mods.Log($"PatchForShaderFind continue");
+                    logger.Log($"PatchForShaderFind continue");
                     continue;
                 }
                 var shaderNew = Shader.Find(shaderName);
-                PFLog.Mods.Log($"PatchForShaderFind shader after Find is null? {shaderNew == null}.");
+                logger.Log($"PatchForShaderFind shader after Find is null? {shaderNew == null}.");
 
                 if (shaderNew == null)
                 {
                     if (BundlesLoadService.Instance == null)
                     {
-                        PFLog.Mods.Log($"PatchForShaderFind BundlesLoadService is null. Continue");
+                        logger.Log($"PatchForShaderFind BundlesLoadService is null. Continue");
                         continue;
                     }
                     else if (ScriptableShaderWrapper.Instance is ScriptableShaderWrapper shaderWrapper)
@@ -93,24 +137,21 @@ namespace ShaderWrapper
                         foreach(var shader in shaderWrapper.shaders)
                         {
                             bool equals = shader?.name == shaderName;
-                            PFLog.Mods.Log($"PatchForShaderFind current shader is {shader?.name ?? "null"}. Equals? {equals}");
+                            logger.Log($"PatchForShaderFind current shader is {shader?.name ?? "null"}. Equals? {equals}");
                             if (equals)
                             {
                                 shaderNew = shader;
                                 break;
                             }
-
                         }
                         //shaderNew = shaderWrapper.shaders.FirstOrDefault(x => x != null && x.name == shaderName);
-                        PFLog.Mods.Log($"PatchForShaderFind shaderNew after wrapper is null? {shaderNew == null}");
-
+                        logger.Log($"PatchForShaderFind shaderNew after wrapper is null? {shaderNew == null}");
                     }
-
                 }
                 if (shaderNew != null)
-                   material.shader= shaderNew;
-           }
-            return false;
+                    material.shader= shaderNew;
+            }
+            //return false;
         }
     }
 }

@@ -15,6 +15,8 @@ using Kingmaker.Utility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using Owlcat.Runtime.Core.Logging;
+
 using WrathPatches;
 
 namespace OwlModPatcherEnhancer;
@@ -38,9 +40,28 @@ public static class TheEnhance
 
     //};
 
-    static BlueprintJsonWrapper WrapperInstance = new();
+    static class ThreadStaticData
+    {
+        [ThreadStatic]
+        public static BlueprintJsonWrapper? WrapperInstance;
+
+        [ThreadStatic]
+        public static OwlcatModification? CurrentMod;
+    }
+
+    static BlueprintJsonWrapper WrapperInstance => ThreadStaticData.WrapperInstance ??= new();
 
     static JsonMergeSettings MergeSettings = default!;
+
+    static LogChannel ModLogger => ThreadStaticData.CurrentMod?.Logger ?? PFLog.Mods;
+
+    [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.TryPatchBlueprint))]
+    [HarmonyPrefix]
+    static void TryPatchBlueprint_Prefix(OwlcatModification __instance)
+    {
+        ThreadStaticData.CurrentMod = __instance;
+    }
+
     [HarmonyPrepare]
     static bool Prepare()
     {
@@ -50,7 +71,6 @@ public static class TheEnhance
 #endif
         return MergeSettings != null;
     }
-
 
     [HarmonyPatch(typeof(OwlcatModificationBlueprintPatcher), "ApplyPatchEntry", new Type[] { typeof(JObject), typeof(JObject) })]
     [HarmonyPostfix]
@@ -74,7 +94,7 @@ public static class TheEnhance
             {
                 if (componentName.IsNullOrEmpty())
                 {
-                    PFLog.Mods.Warning($"OwlModPatcherEnhance - a component patch with empty Name");
+                    ModLogger.Warning($"OwlModPatcherEnhance - a component patch with empty Name");
                     continue;
                 }
                 JObject? componentToPatch = null;
@@ -86,7 +106,7 @@ public static class TheEnhance
                         var name = (comps.Current as JObject)?["name"]?.ToString();
                         {
                             if (name.IsNullOrEmpty())
-                                PFLog.Mods.Warning("OwlModPatcherEnhance Found a component with null or empty name: \n" + (comps.Current as JObject));
+                                ModLogger.Warning("OwlModPatcherEnhance Found a component with null or empty name: \n" + (comps.Current as JObject));
                         }
                         if (name != componentName)
                             continue;
@@ -96,14 +116,14 @@ public static class TheEnhance
 
                 if (componentToPatch == null)
                 {
-                    PFLog.Mods.Warning($"Failed to find component with the name '{componentName}' when patching blueprint {jsonBlueprint["name"]} (guid {jsonBlueprint["AssetGuid"]}");
+                    ModLogger.Warning($"Failed to find component with the name '{componentName}' when patching blueprint {jsonBlueprint["name"]} (guid {jsonBlueprint["AssetGuid"]}");
                 }
                 var patchString = currentComponentPatch["Data"];
                 componentToPatch!.Merge(patchString, MergeSettings);
             }
             catch (Exception ex)
             {
-                PFLog.Mods.Exception(ex, $"Error on patching blueprint {jsonBlueprint["name"]} (guid {jsonBlueprint["AssetGuid"]}) with component {componentName}");
+                ModLogger.Exception(ex, $"Error on patching blueprint {jsonBlueprint["name"]} (guid {jsonBlueprint["AssetGuid"]}) with component {componentName}");
             }
         }
     }
@@ -130,18 +150,17 @@ public static class TheEnhance
             var elementName = currentPatch["Name"].ToString();
             if (elementName.IsNullOrEmpty())
             {
-                PFLog.Mods.Warning($"OwlModPatcherEnhancer found a patch with empty element name when patching blueprint {blueprint.name} (guid {blueprint.AssetGuid})");
+                ModLogger.Warning($"OwlModPatcherEnhancer found a patch with empty element name when patching blueprint {blueprint.name} (guid {blueprint.AssetGuid})");
                 continue;
             }
             var element = blueprint.ElementsArray.FirstOrDefault(el => el.name == elementName);
             if (element == null)
             {
-                PFLog.Mods.Warning($"OwlModPatcherEnhancer failed to find an element with name {elementName} when patching blueprint {blueprint.name} (guid {blueprint.AssetGuid})");
+                ModLogger.Warning($"OwlModPatcherEnhancer failed to find an element with name {elementName} when patching blueprint {blueprint.name} (guid {blueprint.AssetGuid})");
                 continue;
             }
             try
             {
-
                 var elementPatch = currentPatch["Data"].ToString();
                 WrapperInstance.Data = blueprint;
                 Json.BlueprintBeingRead = WrapperInstance;
@@ -151,28 +170,27 @@ public static class TheEnhance
             }
             catch (Exception ex)
             {
-                PFLog.Mods.Exception(ex, $"Exception when using OwlModPatcherEnhancer to patch element {elementName} on blueprint {blueprint.name} (guid {blueprint.AssetGuid}");
+                ModLogger.Exception(ex, $"Exception when using OwlModPatcherEnhancer to patch element {elementName} on blueprint {blueprint.name} (guid {blueprint.AssetGuid}");
             }
         }
     }
 
-    //Disable old PatchEnhancer
-    [HarmonyPatch(typeof(OwlcatModificationsManager), MethodType.Constructor, [])]
-    [HarmonyPostfix]
-    static void OMM_Constructor_Postfix(OwlcatModificationsManager __instance)
-    {
-        if (__instance.m_Settings is null)
-            return;
+    ////Disable old PatchEnhancer
+    //[HarmonyPatch(typeof(OwlcatModificationsManager), MethodType.Constructor, [])]
+    //[HarmonyPostfix]
+    //static void OMM_Constructor_Postfix(OwlcatModificationsManager __instance)
+    //{
+    //    if (__instance.m_Settings is null)
+    //        return;
 
-        var enabledMods = __instance.m_Settings.EnabledModifications.Where(m => m != "PatchEnhancer").ToArray();
+    //    var enabledMods = __instance.m_Settings.EnabledModifications.Where(m => m != "PatchEnhancer").ToArray();
 
-        if (enabledMods.Length < __instance.m_Settings.EnabledModifications.Length)
-        {
-            PFLog.Mods.Warning("Disabling old PatchEnhancer");
+    //    if (enabledMods.Length < __instance.m_Settings.EnabledModifications.Length)
+    //    {
+    //        PFLog.Mods.Warning("Disabling old PatchEnhancer");
 
-            AccessTools.Field(typeof(OwlcatModificationsManager.SettingsData), nameof(OwlcatModificationsManager.SettingsData.EnabledModifications))
-                .SetValue(__instance.m_Settings, enabledMods);
-        }
-    }
-
+    //        AccessTools.Field(typeof(OwlcatModificationsManager.SettingsData), nameof(OwlcatModificationsManager.SettingsData.EnabledModifications))
+    //            .SetValue(__instance.m_Settings, enabledMods);
+    //    }
+    //}
 }

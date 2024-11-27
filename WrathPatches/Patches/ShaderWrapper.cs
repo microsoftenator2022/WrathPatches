@@ -16,11 +16,16 @@ namespace WrathPatches.Patches;
 [HarmonyPatch(typeof(OwlcatModificationsManager), nameof(OwlcatModificationsManager.Start))]
 static class ShaderWrapper
 {
+    static bool Applied = false;
     static void Prefix()
     {
+        if (Applied) return;
+
         var shaderWrapperAssembly =
             Assembly.LoadFrom(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ShaderWrapper.dll"));
 
         Main.HarmonyInstance.PatchAll(shaderWrapperAssembly);
+
+        Applied = true;
     }
 }

@@ -81,6 +81,7 @@ static class CatchBlueprintPatchExceptions
 {
     static Exception? Finalizer(Exception __exception, OwlcatModification __instance)
     {
+        if (__exception is not null)
         __instance.Logger.Exception(__exception);
 
         return null;

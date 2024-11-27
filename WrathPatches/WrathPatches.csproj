@@ -9,6 +9,10 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <OutDir>$(SolutionDir)\bin\$(Configuration)\$(TargetFramework)\$(SolutionName)</OutDir>
+    <RestoreAdditionalProjectSources>
+      https://api.nuget.org/v3/index.json;
+      https://nuget.bepinex.dev/v3/index.json;
+    </RestoreAdditionalProjectSources>
   </PropertyGroup>
   
   <ItemGroup>
@@ -34,17 +38,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Assembly-CSharp-firstpass" HintPath="$(SolutionDir)lib\Assembly-CSharp-firstpass_public.dll" Private="False" />
-    <Reference Include="Assembly-CSharp" HintPath="$(SolutionDir)lib\Assembly-CSharp_public.dll" Private="False" />
-    <Reference Include="Owlcat.Runtime.UI" HintPath="$(SolutionDir)lib\Owlcat.Runtime.UI_public.dll" Private="False" />
-    <Reference Include="Owlcat.Runtime.Core" HintPath="$(SolutionDir)lib\Owlcat.Runtime.Core_public.dll" Private="False" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll" Private="False" Publicize="true" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp.dll" Private="False" Publicize="true" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UI.dll" Private="False" Publicize="true" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" Private="False" Publicize="true" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AssemblyPublicizer" Version="1.0.2">
-      <PrivateAssets>none</PrivateAssets>
-      <IncludeAssets>build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" IncludeAssets="build; compile; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
     <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -56,12 +57,12 @@
     <ProjectReference Include="..\ShaderWrapper\ShaderWrapper.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll" />
     <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp.dll" />
     <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UI.dll" />
     <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <None Update="IgnoreHarmonyVersion.txt">
@@ -69,9 +70,9 @@
     </None>
   </ItemGroup>
 
-  <Target Name="Publicize" AfterTargets="BeforeBuild;Clean" Inputs="@(Publicize)" Outputs="$(SolutionDir)lib\%(Publicize.Filename)_public.dll">
+  <!--<Target Name="Publicize" AfterTargets="BeforeBuild;Clean" Inputs="@(Publicize)" Outputs="$(SolutionDir)lib\%(Publicize.Filename)_public.dll">
     <PublicizeTask InputAssemblies="@(Publicize)" OutputDir="$(SolutionDir)lib\" />
-  </Target>
+  </Target>-->
 
   <Target Name="InfoJson" AfterTargets="Deploy">
     <InfoJson 

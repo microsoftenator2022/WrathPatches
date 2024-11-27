@@ -24,7 +24,11 @@ namespace WrathPatches
                     .Select(type => (type, type.GetCustomAttribute<TypeIdAttribute>()?.GuidString))
                     .Where(t => t.GuidString is not null))
                 {
-                    WrathPatches.Main.Logger.Log($"Adding {type} with TypeId {guid} to binder cache");
+
+                    var logMessage = $"Adding {type} with TypeId {guid} to binder cache";
+                    WrathPatches.Main.Logger.Log(logMessage);
+                    __instance.Logger.Log(logMessage);
+
                     binder.AddToCache(type, guid);
                 }
             }

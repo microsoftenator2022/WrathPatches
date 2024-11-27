@@ -7,16 +7,24 @@
 
   <ItemGroup>
     <Reference Include="$(WrathPath)\Wrath_Data\Managed\0Harmony.dll" Private="false" />
-    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp.dll" Private="False" />
-    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" Private="false" />
-    <Reference Include="$(WrathPath)\Wrath_Data\Managed\UnityEngine.AssetBundleModule.dll" />
-    <Reference Include="$(WrathPath)\Wrath_Data\Managed\UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp.dll" Private="False" Publicize="true" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" Private="false" Publicize="true" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\UnityEngine.AssetBundleModule.dll" Publicize="true" />
+    <Reference Include="$(WrathPath)\Wrath_Data\Managed\UnityEngine.CoreModule.dll" Private="false" Publicize="true" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="scriptableshaderwrapper">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" IncludeAssets="build; compile; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
+    <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

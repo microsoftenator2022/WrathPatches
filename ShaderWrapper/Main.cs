@@ -13,14 +13,14 @@ namespace ShaderWrapper
     {
         static Harmony harmony;
 
-        [OwlcatModificationEnterPoint]
-        public static void EntryPoint(OwlcatModification owlcatModification)
-        {
-            if (harmony == null)
-            {
-                harmony = new Harmony(owlcatModification.Manifest.UniqueName);
-                harmony.PatchAll(Assembly.GetExecutingAssembly());
-            }
-        }
+        //[OwlcatModificationEnterPoint]
+        //public static void EntryPoint(OwlcatModification owlcatModification)
+        //{
+        //    if (harmony == null)
+        //    {
+        //        harmony = new Harmony(owlcatModification.Manifest.UniqueName);
+        //        harmony.PatchAll(Assembly.GetExecutingAssembly());
+        //    }
+        //}
     }
 }
