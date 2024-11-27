@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 using HarmonyLib;
 
 using Kingmaker.UI.MVVM._VM.ActionBar;
+using Kingmaker.UI.MVVM._VM.Tooltip.Bricks;
+using Kingmaker.UI.MVVM._VM.Tooltip.Templates;
 using Kingmaker.UI.UnitSettings;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.Utility;
+
+using Owlcat.Runtime.UI.Tooltips;
 
 namespace WrathPatches.Patches;
 
@@ -56,7 +60,9 @@ internal class SpellSlotComparisonFixes
 
     static int Compare(AbilityData a1, AbilityData a2)
     {
+        #if DEBUG
         Main.Logger.Log($"{nameof(SpellSlotComparisonFixes)}.{nameof(Compare)}");
+        #endif
 
         if (a1.Spellbook is { } sb1 && a2.Spellbook is { } sb2)
         {
@@ -77,7 +83,7 @@ internal class SpellSlotComparisonFixes
         var compare = Compare(s1.Spell, s2.Spell);
 
         #if DEBUG
-        Main.Logger.Log($"{nameof(Comparator_Postfix)}: {compare}");
+        Main.Logger.Log($"{nameof(ActionBarSpellbookHelper)}.{nameof(Comparator_Postfix)}: {compare}");
         #endif
 
         return compare;
@@ -137,5 +143,19 @@ internal class SpellSlotComparisonFixes
 
         if (!applied)
             throw new Exception("Failed to find target instruction");
+    }
+
+    [HarmonyPatch(typeof(TooltipTemplateAbility), nameof(TooltipTemplateAbility.GetHeader), [typeof(TooltipTemplateType)])]
+    static IEnumerable<ITooltipBrick> Postfix(IEnumerable<ITooltipBrick> __result, TooltipTemplateAbility __instance)
+    {
+        if (!__result.Any() ||
+            __instance.m_AbilityData is null ||
+            !__instance.m_AbilityData.Blueprint.IsSpell ||
+            __instance.m_AbilityData.Spellbook?.Blueprint?.DisplayName is not { } spellbookName)
+            return __result;
+
+        return __result
+            .Skip(1)
+            .Push(new TooltipBrickEntityHeader(__instance.m_Name, __instance.m_Icon, $"{__instance.m_Type} - {spellbookName}", __instance.m_School, __instance.m_Level, isItem: false));
     }
 }

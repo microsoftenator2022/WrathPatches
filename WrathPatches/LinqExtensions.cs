@@ -130,5 +130,15 @@ namespace WrathPatches
 
         public static IEnumerable<T> NotNull<T>(this IEnumerable<T?> source) where T : class =>
             source.SelectMany(x => x.EmptyIfNull());
+
+        public static IEnumerable<T> Push<T>(this IEnumerable<T> source, T value)
+        {
+            yield return value;
+
+            foreach (var item in source)
+            {
+                yield return item;
+            }
+        }
     }
 }
