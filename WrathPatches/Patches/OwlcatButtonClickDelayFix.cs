@@ -28,7 +28,7 @@ internal static class OwlcatButtonClickDelayFix
     .Select(t => AccessTools.Method(t, "MoveNext"));
 
     [HarmonyTranspiler]
-    internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+    internal static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase originalMethod)
     {
         var match = instructions.FindInstructionsIndexed(
         [
@@ -38,9 +38,11 @@ internal static class OwlcatButtonClickDelayFix
 
         if (match.Length != 2)
         {
-            Main.Logger.Log(string.Concat(instructions.Select(i => i.ToString() + "\n")));
+            Main.Logger.Warning($"Could not find patch target in {originalMethod}");
 
-            throw new Exception("Could not find patch target");
+            #if DEBUG
+            Main.Logger.Log(string.Concat(instructions.Select(i => i.ToString() + "\n")));
+            #endif
         }
 
         var iList = instructions.ToList();

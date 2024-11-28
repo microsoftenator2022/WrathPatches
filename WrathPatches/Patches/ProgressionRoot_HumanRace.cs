@@ -14,7 +14,7 @@ using Kingmaker.Blueprints.Root;
 
 namespace WrathPatches.Patches;
 
-[WrathPatch("Make ProgressionRoot.HumanRace not break if added new races")]
+[WrathPatch("Make ProgressionRoot.HumanRace not break for new races")]
 [HarmonyPatch(typeof(ProgressionRoot), nameof(ProgressionRoot.HumanRace), MethodType.Getter)]
 internal static class ProgressionRoot_HumanRace
 {
