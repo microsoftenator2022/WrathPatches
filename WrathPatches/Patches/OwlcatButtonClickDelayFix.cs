@@ -40,9 +40,11 @@ internal static class OwlcatButtonClickDelayFix
         {
             Main.Logger.Warning($"Could not find patch target in {originalMethod}");
 
-            #if DEBUG
-            Main.Logger.Log(string.Concat(instructions.Select(i => i.ToString() + "\n")));
-            #endif
+#if DEBUG
+            Main.Logger.Log(string.Join("\n", instructions));
+#endif
+
+            return instructions;
         }
 
         var iList = instructions.ToList();

@@ -25,44 +25,44 @@ internal class SpellSlotComparisonFixes
 {
     static int MetaComparator(AbilityData a1, AbilityData a2)
     {
-        #if DEBUG
+#if DEBUG
         Main.Logger.Log($"Compare {a1.Name} to {a2.Name}");
         Main.Logger.Log($"{a1} metamagic mask: {a1.MetamagicData?.MetamagicMask}");
         Main.Logger.Log($"{a2} metamagic mask: {a2.MetamagicData?.MetamagicMask}");
-        #endif
+#endif
         
         var result = (a2.MetamagicData != null ? (int)a2.MetamagicData.MetamagicMask : 0) - (a1.MetamagicData != null ? (int)a1.MetamagicData.MetamagicMask : 0);
         
-        #if DEBUG
+#if DEBUG
         Main.Logger.Log($"Result: {result}");
-        #endif
+#endif
 
         return result;
     }
 
     static int CompareSpellbooks(Spellbook sb1, Spellbook sb2)
     {
-        #if DEBUG
+#if DEBUG
         Main.Logger.Log($"Compare spellbooks: sb1 = {sb1} sb2 = {sb2}");
-        #endif
+#endif
 
         var sb2Index = sb2.Owner.Spellbooks.IndexOf(sb2);
         var sb1Index = sb1.Owner.Spellbooks.IndexOf(sb1);
 
         var result = sb2Index - sb1Index;
 
-        #if DEBUG
+#if DEBUG
         Main.Logger.Log($"Result: {sb2Index} - {sb1Index} = {result}");
-        #endif
+#endif
 
         return result;
     }
 
     static int Compare(AbilityData a1, AbilityData a2)
     {
-        #if DEBUG
+#if DEBUG
         Main.Logger.Log($"{nameof(SpellSlotComparisonFixes)}.{nameof(Compare)}");
-        #endif
+#endif
 
         if (a1.Spellbook is { } sb1 && a2.Spellbook is { } sb2)
         {
@@ -82,9 +82,9 @@ internal class SpellSlotComparisonFixes
 
         var compare = Compare(s1.Spell, s2.Spell);
 
-        #if DEBUG
+#if DEBUG
         Main.Logger.Log($"{nameof(ActionBarSpellbookHelper)}.{nameof(Comparator_Postfix)}: {compare}");
-        #endif
+#endif
 
         return compare;
     }
@@ -95,9 +95,9 @@ internal class SpellSlotComparisonFixes
     {
         var compare = Compare(s1.Spell, s2.Spell);
 
-        #if DEBUG
+#if DEBUG
         Main.Logger.Log($"{nameof(ActionBarSpellbookHelper_IsEquals_SpellSlot_Postfix)}: {compare}");
-        #endif
+#endif
 
         return result && compare == 0;
     }
