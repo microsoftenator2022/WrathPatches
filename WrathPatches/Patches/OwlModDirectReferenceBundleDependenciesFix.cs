@@ -33,6 +33,22 @@ public static class OwlModDirectReferenceBundleDependenciesFix
     [HarmonyFinalizer]
     static void OwlcatModification_ApplyInternal_Finalizer() => ModificationBeingApplied = null;
 
+    [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.TryLoadBundle))]
+    [HarmonyPostfix]
+    static AssetBundle? OwlcatModification_TryLoadBundle_Postfix(AssetBundle? __result, OwlcatModification __instance, string bundleName)
+    {
+        if (__result != null)
+            return __result;
+
+        if (__instance.Bundles.Contains(bundleName))
+        {
+            __instance.Logger.Log($"Loading {bundleName} from {__instance.Manifest.UniqueName}/Bundles");
+            return __instance.LoadBundle(bundleName);
+        }
+
+        return null;
+    }
+
 //#if DEBUG
     [HarmonyPatch(typeof(OwlcatModificationsManager), nameof(OwlcatModificationsManager.TryLoadBundle))]
     [HarmonyPrefix]
