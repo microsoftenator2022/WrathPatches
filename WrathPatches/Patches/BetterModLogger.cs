@@ -28,6 +28,8 @@ namespace WrathPatches.Patches;
 [HarmonyPatch]
 static class BetterModLogger
 {
+    static readonly Dictionary<string, UberLoggerFilter> ModLoggers = [];
+
     [HarmonyPatch(typeof(OwlcatModification), MethodType.Constructor, [typeof(string), typeof(string), typeof(OwlcatModificationManifest), typeof(Exception)])]
     [HarmonyPostfix]
     internal static void AddModLogSink(OwlcatModification __instance, string dataFolderPath)
@@ -46,7 +48,15 @@ static class BetterModLogger
 
         Main.Logger.Log($"Log file path: {Path.Combine(path, fileName)}");
 
+        if (ModLoggers.ContainsKey(fileName))
+        {
+            PFLog.Mods.Error($"Logger for {__instance.Manifest.UniqueName} has already been created");
+            return;
+        }
+
         var sink = new UberLoggerFilter(new UberLoggerFile(fileName, path), LogSeverity.Disabled, [__instance.Manifest.UniqueName]);
+
+        ModLoggers.Add(fileName, sink);
 
         Logger.Instance.AddLogger(sink, false);
     }
