@@ -21,10 +21,10 @@ using Newtonsoft.Json;
 
 using Owlcat.Runtime.Core.Logging;
 
-namespace WrathPatches.Patches.Experimental;
+namespace WrathPatches.Patches;
 
 [WrathPatch("Add per-OwlMod log sinks")]
-[HarmonyPatchCategory("Experimental")]
+//[HarmonyPatchCategory("Experimental")]
 [HarmonyPatch]
 static class BetterModLogger
 {
@@ -48,7 +48,7 @@ static class BetterModLogger
 
         var sink = new UberLoggerFilter(new UberLoggerFile(fileName, path), LogSeverity.Disabled, [__instance.Manifest.UniqueName]);
 
-        Owlcat.Runtime.Core.Logging.Logger.Instance.AddLogger(sink, false);
+        Logger.Instance.AddLogger(sink, false);
     }
 }
 
@@ -85,7 +85,7 @@ static class CatchBlueprintPatchExceptions
     static Exception? Finalizer(Exception __exception, OwlcatModification __instance)
     {
         if (__exception is not null)
-        __instance.Logger.Exception(__exception);
+            __instance.Logger.Exception(__exception);
 
         return null;
     }
