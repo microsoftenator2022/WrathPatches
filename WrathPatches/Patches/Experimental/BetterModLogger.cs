@@ -30,8 +30,11 @@ static class BetterModLogger
 {
     [HarmonyPatch(typeof(OwlcatModification), MethodType.Constructor, [typeof(string), typeof(string), typeof(OwlcatModificationManifest), typeof(Exception)])]
     [HarmonyPostfix]
-    static void AddModLogSink(OwlcatModification __instance, string dataFolderPath)
+    internal static void AddModLogSink(OwlcatModification __instance, string dataFolderPath)
     {
+        if (__instance is null || __instance.Manifest is null)
+            return;
+
         Main.Logger.Log($"{__instance.Manifest.UniqueName}.Logger.Name = {__instance.Logger?.Name}");
 
         if (__instance.Logger is null || __instance.Logger.Name != __instance.Manifest.UniqueName)
