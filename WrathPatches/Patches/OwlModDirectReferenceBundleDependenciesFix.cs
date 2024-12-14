@@ -18,7 +18,7 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches.Patches;
 
-[HarmonyPatchCategory("Experimental")]
+//[HarmonyPatchCategory("Experimental")]
 [WrathPatch("Load OwlMod BlueprintDirectReferences dependencies")]
 [HarmonyPatch]
 public static class OwlModDirectReferenceBundleDependenciesFix
@@ -33,7 +33,7 @@ public static class OwlModDirectReferenceBundleDependenciesFix
     [HarmonyFinalizer]
     static void OwlcatModification_ApplyInternal_Finalizer() => ModificationBeingApplied = null;
 
-#if DEBUG
+//#if DEBUG
     [HarmonyPatch(typeof(OwlcatModificationsManager), nameof(OwlcatModificationsManager.TryLoadBundle))]
     [HarmonyPrefix]
     static bool OwlcatModificationsManager_TryLoadBundle_Prefix(string bundleName, ref AssetBundle? __result)
@@ -76,7 +76,7 @@ public static class OwlModDirectReferenceBundleDependenciesFix
     {
         __instance.Logger.Log($"Load bundle {bundleName}. Is null? {__result == null}");
     }
-#endif
+//#endif
 
     [HarmonyPatch(typeof(OwlcatModificationsManager), nameof(OwlcatModificationsManager.AppliedModifications), MethodType.Getter)]
     [HarmonyPostfix]
