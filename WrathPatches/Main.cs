@@ -1,22 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
 
 using HarmonyLib;
-
-using Kingmaker;
-using Kingmaker.Blueprints;
-using Kingmaker.Blueprints.JsonSystem;
-using Kingmaker.Sound;
-using Kingmaker.Utility;
-using Kingmaker.Visual.Sound;
-
-using Newtonsoft.Json;
 
 using UnityEngine;
 
@@ -129,27 +116,14 @@ static partial class Main
 
         ModEntry.OnToggle = (_, value) => value;
 
-        //static bool replaceHarmonyVersion(Version harmonyVersion)
-        //{
-        //    var ignoreFilePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "IgnoreHarmonyVersion.txt");
-        //    if (File.Exists(ignoreFilePath))
-        //    {
-        //        var text = File.ReadAllText(ignoreFilePath).Trim();
-
-        //        return  !Version.TryParse(text, out var ignoreVersion) || ignoreVersion <= harmonyVersion;
-        //    }
-
-        //    return true;
-        //}
-
-        //if (!CheckHarmonyVersion(replaceHarmonyVersion))
-        //    return false;
-
         HarmonyInstance = new Harmony(modEntry.Info.Id);
 
         RunPatches(PatchClasses.Value.Where(tuple => !IsExperimental(tuple.pc)));
 
 #if DEBUG
+        var harmonyDebug = Harmony.DEBUG;
+        Harmony.DEBUG = true;
+
         Logger.Log("Running experimental patches");
         try
         {
@@ -159,6 +133,8 @@ static partial class Main
         {
             Logger.LogException(ex);
         }
+
+        Harmony.DEBUG = harmonyDebug;
 #endif
 
         LogsHotkey.EnableHotKey();
@@ -166,27 +142,3 @@ static partial class Main
         return true;
     }
 }
-
-//[HarmonyPatch]
-//static class PreviewBankLoader
-//{
-//    const string TestEventName = "ProjectName_Test";
-//    const uint TestEventId = 123456789;
-//    const string PreviewBankName = "PreviewBankName";
-
-//    [HarmonyPatch(typeof(UnitAsksComponent), nameof(UnitAsksComponent.PlayPreview))]
-//    [HarmonyPrefix]
-//    static bool LoadPreviewBank(UnitAsksComponent __instance)
-//    {
-//        if (__instance.PreviewSound is not TestEventName)
-//            return true;
-        
-//        if (!SoundBanksManager.s_Handles.Any(handle => handle.Key is PreviewBankName))
-//            SoundBanksManager.LoadBankSync(PreviewBankName);
-
-//        GameObject gameObject = Game.Instance.UI.Common.gameObject;
-//        SoundEventsManager.PostEvent(TestEventId, gameObject);
-
-//        return false;
-//    }
-//}

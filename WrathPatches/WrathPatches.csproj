@@ -34,7 +34,6 @@
     <Reference Include="Unity.RenderPipelines.Core.Runtime" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll" Private="False" />
     <Reference Include="UniRx" HintPath="$(WrathPath)\Wrath_Data\Managed\UniRx.dll" Private="False" />
     <Reference Include="UnityModManager" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityModManager\UnityModManager.dll" Private="False" />
-    <!--<Reference Include="$(WrathPath)\Wrath_Data\Managed\System.IO.Compression.dll" Private="False" />-->
   </ItemGroup>
 
   <ItemGroup>
@@ -58,28 +57,17 @@
     <ProjectReference Include="..\ShaderWrapper\ShaderWrapper.csproj" />
   </ItemGroup>
 
-  <!--<ItemGroup>
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll" />
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp.dll" />
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UI.dll" />
-    <Publicize Include="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Core.dll" />
-  </ItemGroup>-->
-
   <ItemGroup>
     <None Update="IgnoreHarmonyVersion.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-  <!--<Target Name="Publicize" AfterTargets="BeforeBuild;Clean" Inputs="@(Publicize)" Outputs="$(SolutionDir)lib\%(Publicize.Filename)_public.dll">
-    <PublicizeTask InputAssemblies="@(Publicize)" OutputDir="$(SolutionDir)lib\" />
-  </Target>-->
-
   <Target Name="InfoJson" AfterTargets="Deploy">
     <InfoJson 
       OutputPath="$(OutDir)"
       Id="$(MSBuildProjectName)"
-      Version="$(VersionPrefix)"
+      Version="$(Version)"
       DisplayName="WrathPatches"
       Author="microsoftenator"
       GameVersion="2.5.0"
