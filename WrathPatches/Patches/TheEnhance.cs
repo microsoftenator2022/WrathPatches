@@ -40,6 +40,18 @@ public static class TheEnhance
 
     //};
 
+    static readonly JsonSerializerSettings settings = new()
+    {
+        ContractResolver = Json.Serializer.ContractResolver,
+        TypeNameHandling = TypeNameHandling.Auto,
+        PreserveReferencesHandling = PreserveReferencesHandling.None,
+        DefaultValueHandling = DefaultValueHandling.Include,
+        ReferenceLoopHandling = ReferenceLoopHandling.Error,
+        Formatting = Formatting.Indented,
+        Binder = Json.Serializer.Binder,
+        Converters = [.. Json.GetConverters()]
+    };
+    
     static class ThreadStaticData
     {
         [ThreadStatic]
@@ -164,7 +176,7 @@ public static class TheEnhance
                 var elementPatch = currentPatch["Data"].ToString();
                 WrapperInstance.Data = blueprint;
                 Json.BlueprintBeingRead = WrapperInstance;
-                JsonConvert.PopulateObject(elementPatch, element);
+                JsonConvert.PopulateObject(elementPatch, element, settings);
                 Json.BlueprintBeingRead = null;
                 blueprint.RemoveFromElementsList(element);
             }
