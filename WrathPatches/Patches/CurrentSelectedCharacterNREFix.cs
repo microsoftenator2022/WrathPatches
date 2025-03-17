@@ -11,9 +11,8 @@ using Kingmaker.Armies.TacticalCombat.Data;
 using Kingmaker.Controllers;
 using Kingmaker.EntitySystem.Entities;
 
-namespace WrathPatches.Patches.Experimental;
+namespace WrathPatches.Patches;
 
-[HarmonyPatchCategory("Experimental")]
 [WrathPatch("Fix NRE in SelectionCharacterController.CurrentSelectedCharacter")]
 [HarmonyPatch(
     typeof(SelectionCharacterController),
