@@ -63,7 +63,7 @@ static class BetterModLogger
 }
 
 [WrathPatch("Use OwlMod logger in place of PFLog.Mods")]
-[HarmonyPatchCategory("Experimental")]
+//[HarmonyPatchCategory("Experimental")]
 [HarmonyPatch]
 static class PatchModLogInvocations
 {
@@ -88,7 +88,7 @@ static class PatchModLogInvocations
 }
 
 [WrathPatch("Catch and log Blueprint patch exceptions")]
-[HarmonyPatchCategory("Experimental")]
+//[HarmonyPatchCategory("Experimental")]
 [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.TryPatchBlueprint))]
 static class CatchBlueprintPatchExceptions
 {
