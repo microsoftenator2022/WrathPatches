@@ -21,6 +21,7 @@
     <Reference Include="Owlcat.Runtime.Visual" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Visual.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.UniRx" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.UniRx.dll" Private="False" />
     <Reference Include="Owlcat.Runtime.Validation" HintPath="$(WrathPath)\Wrath_Data\Managed\Owlcat.Runtime.Validation.dll" Private="False" />
+    <Reference Include="System.IO.Compression" HintPath="$(WrathPath)\Wrath_Data\Managed\System.IO.Compression.dll" Private="False" />
     <Reference Include="Unity.TextMeshPro" HintPath="$(WrathPath)\Wrath_Data\Managed\Unity.TextMeshPro.dll" Private="False" />
     <Reference Include="UnityEngine" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.dll" Private="False" />
     <Reference Include="UnityEngine.AnimationModule" HintPath="$(WrathPath)\Wrath_Data\Managed\UnityEngine.AnimationModule.dll" Private="False" />
@@ -45,7 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" IncludeAssets="build; compile; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3-dev" IncludeAssets="build; compile; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
     <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

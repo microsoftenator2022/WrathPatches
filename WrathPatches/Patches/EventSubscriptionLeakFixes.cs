@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using Kingmaker.Items;
 using Kingmaker.PubSubSystem;
+using Kingmaker.UI._ConsoleUI.TurnBasedMode;
+using Kingmaker.UI.MVVM._PCView.ActionBar;
 using Kingmaker.UI.MVVM._VM.ActionBar;
 using Kingmaker.UnitLogic.Abilities;
 using System;
@@ -13,11 +15,10 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches.Patches
 {
-    [WrathPatch("Fixes Double Subscribe in ActionBarVM")]
-    [HarmonyPatch(typeof(ActionBarVM))]
-    class ActionBarVMDoubleSubscribe
+    [HarmonyPatch()]
+    partial class EventSubscriptionLeakFixes
     {
-        [HarmonyPatch(MethodType.Constructor)]
+        [HarmonyPatch(typeof(ActionBarVM), MethodType.Constructor)]
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> DoubleSubscribe_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
