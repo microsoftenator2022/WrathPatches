@@ -15,7 +15,7 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches.Patches
 {
-    [HarmonyPatch()]
+    [HarmonyPatch]
     partial class EventSubscriptionLeakFixes
     {
         [HarmonyPatch(typeof(ActionBarVM), MethodType.Constructor)]
