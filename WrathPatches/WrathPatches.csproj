@@ -46,8 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3-dev" IncludeAssets="build; compile; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
-    <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.4.0">
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" IncludeAssets="compile; build; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
+    <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.5.0-rc4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -65,7 +65,7 @@
   </ItemGroup>
 
   <Target Name="InfoJson" AfterTargets="Deploy">
-    <InfoJson 
+    <InfoJson
       OutputPath="$(OutDir)"
       Id="$(MSBuildProjectName)"
       Version="$(Version)"
