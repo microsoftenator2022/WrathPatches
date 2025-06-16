@@ -105,7 +105,7 @@ namespace ShaderWrapper
         }
 
         //internal static bool Prefix(IEnumerable<Material> materials)
-        public static void PatchMaterialShaders(IEnumerable<Material> materials, OwlcatModification mod)
+        public static void PatchMaterialShaders(IEnumerable<Material> materials, OwlcatModification mod = null)
         {
             var logger =
                 mod?.Logger ??
