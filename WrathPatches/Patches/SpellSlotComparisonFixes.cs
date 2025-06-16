@@ -19,7 +19,7 @@ using Owlcat.Runtime.UI.Tooltips;
 
 namespace WrathPatches.Patches;
 
-[WrathPatch("Fix Spell Slot comparison.")]
+[WrathPatch("Fix Spell Slot comparison")]
 [HarmonyPatch]
 internal class SpellSlotComparisonFixes
 {

@@ -18,7 +18,6 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches.Patches;
 
-//[HarmonyPatchCategory("Experimental")]
 [WrathPatch("Load OwlMod BlueprintDirectReferences dependencies")]
 [HarmonyPatch]
 public static class OwlModDirectReferenceBundleDependenciesFix

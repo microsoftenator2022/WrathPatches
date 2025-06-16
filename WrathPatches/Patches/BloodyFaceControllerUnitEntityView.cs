@@ -16,7 +16,6 @@ namespace WrathPatches.Patches
 {
     [WrathPatch("No BloodyFaceController for non-UnitEntityView")]
     [HarmonyPatch(typeof(StandardMaterialController), nameof(StandardMaterialController.Awake))]
-    //[HarmonyPatchCategory("Experimental")]
     internal class BloodyFaceControllerUnitEntityView
     {
         static bool HasUnitEntityView(StandardMaterialController smc) => smc.gameObject.GetComponent<UnitEntityView>() is not null;

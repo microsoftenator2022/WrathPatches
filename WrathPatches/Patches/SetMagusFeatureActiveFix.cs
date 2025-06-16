@@ -13,7 +13,6 @@ using WrathPatches.TranspilerUtil;
 
 namespace WrathPatches.Patches
 {
-    //[HarmonyPatchCategory("Experimental")]
     [WrathPatch("Remove unnecessary code in SetMagusFeatureActive.OnTurnOff")]
     [HarmonyPatch(typeof(SetMagusFeatureActive), nameof(SetMagusFeatureActive.OnTurnOff))]
     internal static class SetMagusFeatureActiveFix
