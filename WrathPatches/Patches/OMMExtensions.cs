@@ -179,10 +179,11 @@ static class OMMVersionCheck
 #if DEBUG
         var patched = false;
 #endif
+        var string_op_Inequality = AccessTools.Method(typeof(string), "op_Inequality", [typeof(string), typeof(string)]);
 
         foreach (var i in instructions)
         {
-            if (i.Calls(AccessTools.Method(typeof(string), "op_Inequality", [typeof(string), typeof(string)])))
+            if (i.Calls(string_op_Inequality))
             {
 #if DEBUG
                 patched = true;

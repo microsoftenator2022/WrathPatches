@@ -20,17 +20,20 @@ namespace WrathPatches
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> OnStateEnter_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var matched = instructions.FindSequence(new Func<CodeInstruction, bool>[]
-            {
+            var AnimationClipWrapperStateMachineBehaviour_AnimationParameterIdleOffsetIsMissing =
+                AccessTools.Field(typeof(AnimationClipWrapperStateMachineBehaviour),
+                    nameof(AnimationClipWrapperStateMachineBehaviour.AnimationParameterIdleOffsetIsMissing));
+
+            var Nullable_bool_Value = AccessTools.PropertyGetter(typeof(bool?), nameof(Nullable<bool>.Value));
+
+            var matched = instructions.FindSequence(
+            [
+                ci => ci.opcode == OpCodes.Ldflda &&
+                    ((FieldInfo)ci.operand) == AnimationClipWrapperStateMachineBehaviour_AnimationParameterIdleOffsetIsMissing,
                 ci =>
-                    ci.opcode == OpCodes.Ldflda &&
-                    ((FieldInfo)ci.operand) == AccessTools.Field(typeof(AnimationClipWrapperStateMachineBehaviour),
-                    nameof(AnimationClipWrapperStateMachineBehaviour.AnimationParameterIdleOffsetIsMissing)),
-                ci =>
-                    ci.opcode == OpCodes.Call &&
-                    ((MethodInfo)ci.operand) == (AccessTools.PropertyGetter(typeof(bool?), nameof(Nullable<bool>.Value))),
+                    ci.opcode == OpCodes.Call && ((MethodInfo)ci.operand) == Nullable_bool_Value,
                 ci => ci.opcode == OpCodes.Brfalse_S
-            }).ToArray();
+            ]).ToArray();
 
             if (matched.Length == 3)
             {

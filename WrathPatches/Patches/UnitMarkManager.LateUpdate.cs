@@ -20,12 +20,19 @@ namespace WrathPatches
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
+            var UnitMarkManager_m_Marks = typeof(UnitMarkManager).GetField(nameof(UnitMarkManager.m_Marks), AccessTools.all);
+            var Dictionary_string_UIDecalBase_Values =
+                AccessTools.PropertyGetter(typeof(Dictionary<string, UIDecalBase>), nameof(Dictionary<string, UIDecalBase>.Values));
+            var Dictionary_string_UIDecalBase_ValueCollection =
+                typeof(Dictionary<string, UIDecalBase>.ValueCollection)
+                    .GetMethod(nameof(Dictionary<string, UIDecalBase>.ValueCollection.GetEnumerator));
+
             var match = new Func<CodeInstruction, bool>[]
             {
                 ci => ci.opcode == OpCodes.Ldarg_0,
-                ci => ci.LoadsField(typeof(UnitMarkManager).GetField(nameof(UnitMarkManager.m_Marks), AccessTools.all)),
-                ci => ci.Calls(AccessTools.PropertyGetter(typeof(Dictionary<string, UIDecalBase>), nameof(Dictionary<string, UIDecalBase>.Values))),
-                ci => ci.Calls(typeof(Dictionary<string, UIDecalBase>.ValueCollection).GetMethod(nameof(Dictionary<string, UIDecalBase>.ValueCollection.GetEnumerator)))
+                ci => ci.LoadsField(UnitMarkManager_m_Marks),
+                ci => ci.Calls(Dictionary_string_UIDecalBase_Values),
+                ci => ci.Calls(Dictionary_string_UIDecalBase_ValueCollection)
             };
 
             var iList = instructions.ToList();

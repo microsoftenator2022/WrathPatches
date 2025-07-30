@@ -23,7 +23,10 @@ namespace WrathPatches.Patches
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            var index = instructions.FindIndex(ci => ci.Calls(AccessTools.PropertyGetter(typeof(UnityEngine.Application), nameof(UnityEngine.Application.isPlaying))));
+            var Application_isPlaying =
+                AccessTools.PropertyGetter(typeof(UnityEngine.Application), nameof(UnityEngine.Application.isPlaying));
+
+            var index = instructions.FindIndex(ci => ci.Calls(Application_isPlaying));
 
             if (index < 0)
                 throw new Exception("Could not find target instruction");

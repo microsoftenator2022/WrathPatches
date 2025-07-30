@@ -29,12 +29,14 @@ namespace WrathPatches
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> Patch_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var match = instructions.FindInstructionsIndexed(new Func<CodeInstruction, bool>[]
-            {
+            var PFLog_get_Default = AccessTools.PropertyGetter(typeof(PFLog), nameof(PFLog.Default));
+
+            var match = instructions.FindInstructionsIndexed(
+            [
                 ci => ci.opcode == OpCodes.Brfalse_S,
-                ci => ci.Calls(AccessTools.PropertyGetter(typeof(PFLog), nameof(PFLog.Default))),
+                ci => ci.Calls(PFLog_get_Default),
                 ci => ci.opcode == OpCodes.Ldstr && ci.operand as string == "Bind: no binding named {0}"
-            });
+            ]);
 
             if (match.Count() != 3)
                 throw new KeyNotFoundException("Unable to find patch location");

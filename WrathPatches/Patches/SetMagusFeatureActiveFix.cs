@@ -20,13 +20,15 @@ namespace WrathPatches.Patches
         [HarmonyTranspiler]
         static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
+            var HandsEquipmentSet_get_GripType = AccessTools.PropertyGetter(typeof(HandsEquipmentSet), nameof(HandsEquipmentSet.GripType));
+
             var toMatch = new Func<CodeInstruction, bool>[]
             {
                 ci => ci.opcode == OpCodes.Ldarg_0,
                 ci => ci.opcode == OpCodes.Call,
                 ci => ci.opcode == OpCodes.Callvirt,
                 ci => ci.opcode == OpCodes.Callvirt,
-                ci => ci.Calls(AccessTools.PropertyGetter(typeof(HandsEquipmentSet), nameof(HandsEquipmentSet.GripType))),
+                ci => ci.Calls(HandsEquipmentSet_get_GripType),
                 ci => ci.opcode == OpCodes.Pop
             };
 

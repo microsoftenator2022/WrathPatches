@@ -121,6 +121,8 @@ internal class SpellSlotComparisonFixes
     {
         var applied = false;
 
+        var SpellSlot_SpellShell = AccessTools.PropertyGetter(typeof(SpellSlot), nameof(SpellSlot.SpellShell));
+
         foreach (var i in instructions)
         {
             yield return i;
@@ -132,7 +134,7 @@ internal class SpellSlotComparisonFixes
                 Main.Logger.Log(nameof(ActionBarSpellbookHelper_TryAddSpell_Transpiler));
 
                 yield return new(OpCodes.Ldloc_S, 4);
-                yield return new(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(SpellSlot), nameof(SpellSlot.SpellShell)));
+                yield return new(OpCodes.Callvirt, SpellSlot_SpellShell);
                 yield return new(OpCodes.Ldarg_1);
                 yield return CodeInstruction.Call((AbilityData a1, AbilityData a2) => Compare(a1, a2));
                 yield return new(OpCodes.Brtrue_S, targetLabel);

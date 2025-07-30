@@ -33,9 +33,11 @@ namespace WrathPatches
         {
             Main.Logger.Log($"{nameof(KingmakerInputModule_CheckEventSystem)}.{nameof(Transpiler)}");
 
+            var LogChannel_System = typeof(LogChannel).GetField(nameof(LogChannel.System), AccessTools.all);
+
             var match = new Func<CodeInstruction, bool>[]
             {
-                ci => ci.LoadsField(typeof(LogChannel).GetField(nameof(LogChannel.System), AccessTools.all)),
+                ci => ci.LoadsField(LogChannel_System),
                 ci => ci.opcode == OpCodes.Ldstr && "Await event system".Equals(ci.operand),
                 ci => ci.opcode == OpCodes.Call,
                 ci => ci.opcode == OpCodes.Callvirt

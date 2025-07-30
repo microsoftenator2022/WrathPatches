@@ -112,10 +112,12 @@ public static class OwlModDirectReferenceBundleDependenciesFix
             ci => ci.opcode == OpCodes.Ldstr && ci.operand is DirectReferenceBundleName
         ]).ToArray();
 
+        var IEnumerator_MoveNext = AccessTools.Method(typeof(IEnumerator), nameof(IEnumerator.MoveNext));
+
         var skipSectionEnd = instructions.FindInstructionsIndexed(
         [
             ci => ci.opcode == OpCodes.Ldloc_0,
-            ci => ci.Calls(AccessTools.Method(typeof(IEnumerator), nameof(IEnumerator.MoveNext))),
+            ci => ci.Calls(IEnumerator_MoveNext),
             ci => ci.opcode == OpCodes.Brtrue
         ]).ToArray();
 

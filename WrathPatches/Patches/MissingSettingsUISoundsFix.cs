@@ -28,9 +28,12 @@ namespace WrathPatches.Patches
         {
             var iList = instructions.ToArray();
 
+            var UISoundController_Play =
+                AccessTools.Method(typeof(UISoundController), nameof(UISoundController.Play), [typeof(UISoundType)]);
+
             for (var i = 0; i < iList.Length; i++)
             {
-                if (iList[i].Calls(AccessTools.Method(typeof(UISoundController), nameof(UISoundController.Play), [typeof(UISoundType)])))
+                if (iList[i].Calls(UISoundController_Play))
                 {
 #if DEBUG
                     var value = (UISoundType)(sbyte)(iList[i - 1].operand);
