@@ -6,7 +6,6 @@ using Kingmaker.Blueprints.JsonSystem;
 
 namespace WrathPatches.Patches;
 
-[HarmonyPatchCategory("Experimental")]
 [WrathPatch("Make BlueprintBeingRead ThreadStatic")]
 [HarmonyPatch(typeof(Json), nameof(Json.BlueprintBeingRead))]
 internal static class MakeBlueprintBeingReadThreadStatic
