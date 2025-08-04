@@ -77,6 +77,8 @@ static class UmmModsToGuidClassBinder
                     if (binder.m_GuidToTypeCache.ContainsKey(guid))
                     {
                         PFLog.Mods.Error("I told kuru this would happen");
+                        PFLog.Mods.Error($"Duplicate typeid {guid} for type {type.FullName} in assembly {type.Assembly}");
+                        continue;
                     }
 
                     binder.m_GuidToTypeCache.Add(guid, type);
