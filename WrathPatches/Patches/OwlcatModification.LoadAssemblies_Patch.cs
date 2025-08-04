@@ -52,9 +52,10 @@ static class UmmModsToGuidClassBinder
 
             foreach (var f in Directory
                 .EnumerateFiles(mod.Path, "*.dll", SearchOption.AllDirectories)
-                .Where(path => AppDomain.CurrentDomain.GetAssemblies()
-                    .Select(ass => Path.GetFullPath((ass.Location)))
-                    .Contains(Path.GetFullPath(path))))
+                //.Where(path => AppDomain.CurrentDomain.GetAssemblies()
+                //    .Select(ass => Path.GetFullPath((ass.Location)))
+                //    .Contains(Path.GetFullPath(path)))
+                )
             {
                 Type[] types = [];
 
