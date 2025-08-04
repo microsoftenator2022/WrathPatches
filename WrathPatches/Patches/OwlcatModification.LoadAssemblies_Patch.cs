@@ -50,7 +50,11 @@ static class UmmModsToGuidClassBinder
         {
             Main.Logger.Log($"Adding types to binder from {mod.Info.DisplayName}");
 
-            foreach (var f in Directory.EnumerateFiles(mod.Path, "*.dll", SearchOption.AllDirectories))
+            foreach (var f in Directory
+                .EnumerateFiles(mod.Path, "*.dll", SearchOption.AllDirectories)
+                .Where(path => AppDomain.CurrentDomain.GetAssemblies()
+                    .Select(ass => Path.GetFullPath((ass.Location)))
+                    .Contains(Path.GetFullPath(path))))
             {
                 Type[] types = [];
 
@@ -67,22 +71,29 @@ static class UmmModsToGuidClassBinder
                     Main.Logger.LogException(e);
                     continue;
                 }
-
-                foreach (var (type, guid) in types
-                    .Select(type => (type, type.GetCustomAttribute<TypeIdAttribute>()?.GuidString))
-                    .Where(t => t.GuidString is not null))
+                try
                 {
-                    Main.Logger.Log($"Adding {type} with TypeId {guid} to binder cache");
-
-                    if (binder.m_GuidToTypeCache.ContainsKey(guid))
+                    foreach (var (type, guid) in types
+                        .Select(type => (type, type.GetCustomAttribute<TypeIdAttribute>()?.GuidString))
+                        .Where(t => t.GuidString is not null))
                     {
-                        PFLog.Mods.Error("I told kuru this would happen");
-                        PFLog.Mods.Error($"Duplicate typeid {guid} for type {type.FullName} in assembly {type.Assembly}");
-                        continue;
-                    }
+                        Main.Logger.Log($"Adding {type} with TypeId {guid} to binder cache");
 
-                    binder.m_GuidToTypeCache.Add(guid, type);
-                    binder.m_TypeToGuidCache.Add(type, guid);
+                        if (binder.m_GuidToTypeCache.ContainsKey(guid))
+                        {
+                            PFLog.Mods.Error("I told kuru this would happen");
+                            PFLog.Mods.Error($"Duplicate typeid {guid} for type {type.FullName} in assembly {type.Assembly}");
+                            continue;
+                        }
+
+                        binder.m_GuidToTypeCache.Add(guid, type);
+                        binder.m_TypeToGuidCache.Add(type, guid);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    PFLog.Mods.Exception(ex);
+                    continue;
                 }
             }
         }
