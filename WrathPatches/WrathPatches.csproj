@@ -47,7 +47,7 @@
 
   <ItemGroup>
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" IncludeAssets="compile; build; contentfiles; analyzers; buildtransitive" PrivateAssets="all" />
-    <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.5.0-rc4">
+    <PackageReference Include="MicroUtils.HarmonyAnalyzers" Version="1.6.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -65,18 +65,7 @@
   </ItemGroup>
 
   <Target Name="InfoJson" AfterTargets="Deploy">
-    <InfoJson
-      OutputPath="$(OutDir)"
-      Id="$(MSBuildProjectName)"
-      Version="$(Version)"
-      DisplayName="WrathPatches"
-      Author="microsoftenator"
-      GameVersion="2.5.0"
-      ManagerVersion="0.27.11"
-      HomePage="https://github.com/microsoftenator2022/WrathPatches"
-      Repository="https://raw.githubusercontent.com/microsoftenator2022/WrathPatches/refs/heads/master/Repository.json"
-      AssemblyName="WrathPatches.dll"
-      EntryMethod="WrathPatches.Main.Load" />
+    <InfoJson OutputPath="$(OutDir)" Id="$(MSBuildProjectName)" Version="$(Version)" DisplayName="WrathPatches" Author="microsoftenator" GameVersion="2.5.0" ManagerVersion="0.27.11" HomePage="https://github.com/microsoftenator2022/WrathPatches" Repository="https://raw.githubusercontent.com/microsoftenator2022/WrathPatches/refs/heads/master/Repository.json" AssemblyName="WrathPatches.dll" EntryMethod="WrathPatches.Main.Load" />
   </Target>
   
   <Target Name="Deploy" AfterTargets="Build">

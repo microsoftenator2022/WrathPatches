@@ -140,5 +140,16 @@ namespace WrathPatches
                 yield return item;
             }
         }
+
+        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey key, Func<TValue> valueFactory)
+        {
+            if (!source.TryGetValue(key, out var value))
+                source[key] = value = valueFactory();
+
+            return value;
+        }
+
+        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey key) where TValue : new()
+            => source.GetOrAdd(key, () => new());
     }
 }
