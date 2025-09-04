@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 using HarmonyLib;
 
@@ -14,20 +13,79 @@ using Kingmaker.Blueprints.JsonSystem;
 using Kingmaker.Modding;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace WrathPatches.Patches.Experimental;
+namespace WrathPatches.Patches;
 
-[HarmonyPatchCategory("Experimental")]
-[WrathPatch("OnDemand Load OMM Blueprints")]
+[WrathPatch("Load Blueprints on demand")]
 [HarmonyPatch]
-static class OnDemandOMMBlueprints
+public static class OnDemandBlueprints
 {
+    public delegate object? ResourceLoadEvent(string guid, object? resource);
+
+    public static event ResourceLoadEvent? BeforeResourceLoad;
+    public static event ResourceLoadEvent? AfterResourceLoad;
+
+    static object? OnResourceLoad(ResourceLoadEvent? e, string guid, object? resource)
+    {
+        var subscribers = e?.GetInvocationList().OfType<ResourceLoadEvent>();
+
+        if (subscribers is null)
+            return null;
+
+        var original = resource;
+
+        foreach (var f in subscribers)
+            resource = f(guid, resource) ?? resource;
+
+        return resource != original ? resource : null;
+    }
+    
+    [HarmonyPatch(typeof(OwlcatModificationsManager), nameof(OwlcatModificationsManager.OnResourceLoaded))]
+    [HarmonyPrefix]
+    static void OwlcatModificationsManager_OnResourceLoaded_Prefix(ref object? resource, string guid, out object? __state)
+    {
+        __state = OnResourceLoad(BeforeResourceLoad, guid, resource);
+
+        if (__state != null)
+            resource = __state;
+    }
+
+    // replacement will be null unless an owlmod did something
+    [HarmonyPatch(typeof(OwlcatModificationsManager), nameof(OwlcatModificationsManager.OnResourceLoaded))]
+    [HarmonyPostfix]
+    static void OwlcatModificationsManager_OnResourceLoaded_Postfix(object? resource, string guid, ref object? replacement, object? __state)
+    {
+        var result = OnResourceLoad(AfterResourceLoad, guid, replacement ?? __state ?? resource);
+
+        if (result != null)
+            replacement = result;
+        else if (replacement == null)
+            replacement = __state;
+    }
+
+#if DEBUG
+    static readonly Stopwatch timer = new();
+    [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.LoadBlueprints))]
+    [HarmonyPrefix]
+    static void OwlcatModification_LoadBlueprints_Prefix(OwlcatModification __instance)
+    {
+        Main.Logger.Log($"{__instance.Manifest.UniqueName} {nameof(OwlcatModification.LoadBlueprints)} start");
+        timer.Restart();
+    }
+
+    [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.LoadBlueprints))]
+    [HarmonyPostfix]
+    static void OwlcatModification_LoadBlueprints_Postfix(OwlcatModification __instance)
+    {
+        timer.Stop();
+        Main.Logger.Log($"{__instance.Manifest.UniqueName} {nameof(OwlcatModification.LoadBlueprints)} time = {timer.ElapsedMilliseconds}ms");
+    }
+#endif
     static readonly MethodInfo LoadedBlueprints_TryGetValue = typeof(Dictionary<BlueprintGuid, BlueprintsCache.BlueprintCacheEntry>).GetMethod(nameof(Dictionary<BlueprintGuid, BlueprintsCache.BlueprintCacheEntry>.TryGetValue));
 
     // BlueprintsCache.Load will now call OwlcatModificationsManager.Instance.OnResourceLoaded when a blueprint's guid is not found in the cache.
     // This allows OMM mods to add their blueprints when they are requested instead of all at once.
-    // UMM mods could also do this by patching OwlcatModificationsManager.Instance.OnResourceLoaded.
+    // UMM mods can also do this by subscribing to the OnDemandBlueprints.BeforeResourceLoad event
     [HarmonyPatch(typeof(BlueprintsCache), nameof(BlueprintsCache.Load))]
     [HarmonyTranspiler]
     static IEnumerable<CodeInstruction> BlueprintsCache_Load_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator ilGen)
@@ -70,7 +128,7 @@ static class OnDemandOMMBlueprints
             .InsertBranchAndAdvance(OpCodes.Brtrue_S, matcher.Pos)
             .Insert(leaveAndReturnNull);
 
-        return matcher.InstructionEnumeration(); ;
+        return matcher.InstructionEnumeration();
     }
 
     public static readonly Dictionary<OwlcatModification, Dictionary<string, string>> ModBlueprints = [];
@@ -84,8 +142,9 @@ static class OnDemandOMMBlueprints
             while (reader.Read() && reader.Value is not "AssetId") { }
 
             var assetId = reader.ReadAsString();
-
+#if DEBUG
             mod.Logger.Log($"Register blueprint {assetId} = {path}");
+#endif
 
             if (string.IsNullOrEmpty(assetId))
                 return null;
@@ -154,7 +213,6 @@ static class OnDemandOMMBlueprints
         return matcher.InstructionEnumeration();
     }
 
-    // Need to use __state here because the original method sets replacement to null
     [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.OnResourceLoaded))]
     [HarmonyPrefix]
     static void OwlcatModification_OnResourceLoaded_Prefix(ref object? resource, string guid, OwlcatModification __instance, out SimpleBlueprint? __state)
@@ -182,6 +240,7 @@ static class OnDemandOMMBlueprints
         }
     }
 
+    // Need to use __state here because the original method sets replacement to null
     [HarmonyPatch(typeof(OwlcatModification), nameof(OwlcatModification.OnResourceLoaded))]
     [HarmonyPostfix]
     static void OwlcatModification_OnResourceLoaded_Postfix(ref object? replacement, SimpleBlueprint? __state) => replacement ??= __state;
