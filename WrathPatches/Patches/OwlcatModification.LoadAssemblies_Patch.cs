@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -42,6 +43,9 @@ internal static class OwlcatModification_LoadAssemblies_Patch
 [HarmonyPatch(typeof(OwlcatModificationsManager), nameof(OwlcatModificationsManager.Start))]
 static class UmmModsToGuidClassBinder
 {
+ 
+    static readonly Dictionary<string, HashSet<Type>> DuplicateTypeIds = [];
+    
     static void Prefix()
     {
         var binder = (GuidClassBinder)Json.Serializer.Binder;
@@ -78,12 +82,21 @@ static class UmmModsToGuidClassBinder
                         .Select(type => (type, type.GetCustomAttribute<TypeIdAttribute>()?.GuidString))
                         .Where(t => t.GuidString is not null))
                     {
+                        if (guid is null)
+                            continue;
+
                         Main.Logger.Log($"Adding {type} with TypeId {guid} to binder cache");
 
                         if (binder.m_GuidToTypeCache.ContainsKey(guid))
                         {
-                            PFLog.Mods.Error("I told kuru this would happen");
-                            PFLog.Mods.Error($"Duplicate typeid {guid} for type {type.FullName} in assembly {type.Assembly}");
+                            //PFLog.Mods.Error("I told kuru this would happen");
+
+                            if (!DuplicateTypeIds.TryGetValue(guid, out var ts))
+                                ts = DuplicateTypeIds[guid] = [];
+
+                            ts.Add(type);
+                            PFLog.Mods.Error($"Duplicate typeid {guid}\n" + string.Join("\n", ts.Select(t => $"{t.Assembly.Location}: {t.FullName}")));
+
                             continue;
                         }
 
