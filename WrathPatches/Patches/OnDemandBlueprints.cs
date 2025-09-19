@@ -14,6 +14,8 @@ using Kingmaker.Modding;
 
 using Newtonsoft.Json;
 
+using UnityModManagerNet;
+
 namespace WrathPatches.Patches;
 
 [WrathPatch("Load Blueprints on demand")]
@@ -24,6 +26,8 @@ public static class OnDemandBlueprints
 
     public static event ResourceLoadEvent? BeforeResourceLoad;
     public static event ResourceLoadEvent? AfterResourceLoad;
+
+    static bool Prepare() => !UnityModManager.modEntries.Where(me => me.Enabled).Select(me => me.Info.Id).Contains("0ToyBox0");
 
     static object? OnResourceLoad(ResourceLoadEvent? e, string guid, object? resource)
     {
