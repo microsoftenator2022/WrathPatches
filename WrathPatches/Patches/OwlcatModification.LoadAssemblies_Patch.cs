@@ -95,7 +95,8 @@ static class UmmModsToGuidClassBinder
                                 ts = DuplicateTypeIds[guid] = [];
 
                             ts.Add(type);
-                            PFLog.Mods.Error($"Duplicate typeid {guid}\n" + string.Join("\n", ts.Select(t => $"{t.Assembly.Location}: {t.FullName}")));
+
+                            PFLog.Mods.Log($"Duplicate typeid {guid}\n" + string.Join("\n", ts.Select(t => $"{t.Assembly.Location}: {t.FullName}")));
 
                             continue;
                         }
